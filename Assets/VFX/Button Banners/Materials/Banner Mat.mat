@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Banner Mat
+  m_Shader: {fileID: -6465566751694194690, guid: 3119857fe7d089b45b3567fb3e891915, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_3b1ec1d0b8304a549d8a6fa2f5c6347e_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: fe3eef1f79f58fb42a85afc9581b1246, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_6dce0f5a27ce4c759a4049494fa93bd5_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 4c78d47e88860a341ab0493a44fe1b36, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_906ac26b448b4b89bfb39db9d2e9b78e_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 577c6131d7a03864b8e1fb1d47fae266, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_9e80bd83573a44d482cc4c00fdd43669_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: a838b0361cd69204f82b430d2df38dae, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_c3e20c1c685a4058a1c7da5c8dd9592f_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 7733bb5afacbc16488d3a3e0c9973d07, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_cc29aa6abbb043e6ba43a886c85a7538_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 319fd281daef87a4bafc98a36b5788f7, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_dba10db8e1184116bf4061191d2f353e_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 36a8dd779268fc449ba839b65ffee35e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _ColorMask: 15
+    - _Genius: 1.13
+    - _Genius_Intro: 1
+    - _Legend: 1
+    - _Legend_Intro: 1
+    - _Master: 1
+    - _Master_Intro: 1
+    - _Pro: 1
+    - _Shine: 0
+    - _Stencil: 0
+    - _StencilComp: 8
+    - _StencilOp: 0
+    - _StencilReadMask: 255
+    - _StencilWriteMask: 255
+    - _Transition: 0
+    - _UIMaskSoftnessX: 1
+    - _UIMaskSoftnessY: 1
+    m_Colors:
+    - _ClipRect: {r: 0, g: 0, b: 0, a: 0}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Orange
+  m_Shader: {fileID: -6465566751694194690, guid: 62a3376ff0fde4b4596bd09c20374d08, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: c5be953af9e4e6e47b12f64df3468dd9, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_30e101650b534889bbc6efb943407b63_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: eacfcca2583b3d54d96304d2a8f2c3e8, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_74accd283df94ebcbac00aa9971c2d7f_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: c570bc108564176438313d51b95f10b6, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_8cd7544bcce342d4a4e5db0f6684b6eb_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 33ba0c64dc001c644b20531d98187145, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_fe770ba3fc2248749df16673cd1c93ac_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 35fbee94423b38d4b84010ae74253eef, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _Alpha: 0.5
+    - _ColorMask: 15
+    - _Danger: 0
+    - _Speed: -0.95
+    - _Stencil: 0
+    - _StencilComp: 8
+    - _StencilOp: 0
+    - _StencilReadMask: 255
+    - _StencilWriteMask: 255
+    - _Transition: 0.44915307
+    - _UIMaskSoftnessX: 1
+    - _UIMaskSoftnessY: 1
+    m_Colors:
+    - _ClipRect: {r: 0, g: 0, b: 0, a: 0}
+    - _Color: {r: 1, g: 0.6913182, b: 0.3803922, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

@@ -1,0 +1,1898 @@
+fileFormatVersion: 2
+guid: 7efa68d7793928046a975adb46934f39
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -4235711412261572155
+    second: Instruction2-Picsart-BackgroundRemover_0
+  - first:
+      213: 1130021744082654963
+    second: Instruction2-Picsart-BackgroundRemover_1
+  - first:
+      213: 6124756009841721509
+    second: Instruction2-Picsart-BackgroundRemover_2
+  - first:
+      213: 7272314537577477984
+    second: Instruction2-Picsart-BackgroundRemover_3
+  - first:
+      213: -9211264360680176387
+    second: Instruction2-Picsart-BackgroundRemover_4
+  - first:
+      213: 1589997740096514128
+    second: Instruction2-Picsart-BackgroundRemover_5
+  - first:
+      213: 2031959484890490341
+    second: Instruction2-Picsart-BackgroundRemover_6
+  - first:
+      213: 8062520031525879885
+    second: Instruction2-Picsart-BackgroundRemover_7
+  - first:
+      213: -5630094349613166470
+    second: Instruction2-Picsart-BackgroundRemover_8
+  - first:
+      213: -5555431677538307877
+    second: Instruction2-Picsart-BackgroundRemover_9
+  - first:
+      213: 5107827329226798253
+    second: Instruction2-Picsart-BackgroundRemover_10
+  - first:
+      213: -4294186100591876931
+    second: Instruction2-Picsart-BackgroundRemover_11
+  - first:
+      213: 5360890805609214462
+    second: Instruction2-Picsart-BackgroundRemover_12
+  - first:
+      213: -456566255150988428
+    second: Instruction2-Picsart-BackgroundRemover_13
+  - first:
+      213: 2669011015779613494
+    second: Instruction2-Picsart-BackgroundRemover_14
+  - first:
+      213: -7710587353239040577
+    second: Instruction2-Picsart-BackgroundRemover_15
+  - first:
+      213: 2769471363866148730
+    second: Instruction2-Picsart-BackgroundRemover_16
+  - first:
+      213: -7388593481774345184
+    second: Instruction2-Picsart-BackgroundRemover_17
+  - first:
+      213: 7226610811882162219
+    second: Instruction2-Picsart-BackgroundRemover_18
+  - first:
+      213: -2531026356378772059
+    second: Instruction2-Picsart-BackgroundRemover_19
+  - first:
+      213: -5521456396640689184
+    second: Instruction2-Picsart-BackgroundRemover_20
+  - first:
+      213: -6543527126277047260
+    second: Instruction2-Picsart-BackgroundRemover_21
+  - first:
+      213: 6687189863638284744
+    second: Instruction2-Picsart-BackgroundRemover_22
+  - first:
+      213: 2962033577636044022
+    second: Instruction2-Picsart-BackgroundRemover_23
+  - first:
+      213: -8404717215233592008
+    second: Instruction2-Picsart-BackgroundRemover_24
+  - first:
+      213: 7620959896278496085
+    second: Instruction2-Picsart-BackgroundRemover_25
+  - first:
+      213: -4163654739361058312
+    second: Instruction2-Picsart-BackgroundRemover_26
+  - first:
+      213: 4559533629538768110
+    second: Instruction2-Picsart-BackgroundRemover_27
+  - first:
+      213: 5787844762242722506
+    second: Instruction2-Picsart-BackgroundRemover_28
+  - first:
+      213: 2200772911034615324
+    second: Instruction2-Picsart-BackgroundRemover_29
+  - first:
+      213: 2727933689200074864
+    second: Instruction2-Picsart-BackgroundRemover_30
+  - first:
+      213: -3080974903929374208
+    second: Instruction2-Picsart-BackgroundRemover_31
+  - first:
+      213: 6683864978421052530
+    second: Instruction2-Picsart-BackgroundRemover_32
+  - first:
+      213: 8992912451286371776
+    second: Instruction2-Picsart-BackgroundRemover_33
+  - first:
+      213: -7315942272528586072
+    second: Instruction2-Picsart-BackgroundRemover_34
+  - first:
+      213: 385034814726680411
+    second: Instruction2-Picsart-BackgroundRemover_35
+  - first:
+      213: 6480882434191625323
+    second: Instruction2-Picsart-BackgroundRemover_36
+  - first:
+      213: 84250210822262391
+    second: Instruction2-Picsart-BackgroundRemover_37
+  - first:
+      213: 3100367480536827270
+    second: Instruction2-Picsart-BackgroundRemover_38
+  - first:
+      213: 3514109972400615357
+    second: Instruction2-Picsart-BackgroundRemover_39
+  - first:
+      213: 2082658519723347667
+    second: Instruction2-Picsart-BackgroundRemover_40
+  - first:
+      213: 4184902075913122256
+    second: Instruction2-Picsart-BackgroundRemover_41
+  - first:
+      213: 4429187698817130956
+    second: Instruction2-Picsart-BackgroundRemover_42
+  - first:
+      213: -9127594220926494981
+    second: Instruction2-Picsart-BackgroundRemover_43
+  - first:
+      213: -8793759348622637276
+    second: Instruction2-Picsart-BackgroundRemover_44
+  - first:
+      213: 8628570856176752598
+    second: Instruction2-Picsart-BackgroundRemover_45
+  - first:
+      213: -234696961063714008
+    second: Instruction2-Picsart-BackgroundRemover_46
+  - first:
+      213: 8918502460408937820
+    second: Instruction2-Picsart-BackgroundRemover_47
+  - first:
+      213: 4462623465955259493
+    second: Instruction2-Picsart-BackgroundRemover_48
+  - first:
+      213: 3689276806985126877
+    second: Instruction2-Picsart-BackgroundRemover_49
+  - first:
+      213: 1949450440437791176
+    second: Instruction2-Picsart-BackgroundRemover_50
+  - first:
+      213: -509248011650323692
+    second: Instruction2-Picsart-BackgroundRemover_51
+  - first:
+      213: 2801150257267696148
+    second: Instruction2-Picsart-BackgroundRemover_52
+  - first:
+      213: 2684019094391455973
+    second: Instruction2-Picsart-BackgroundRemover_53
+  - first:
+      213: -2100107961920650863
+    second: Instruction2-Picsart-BackgroundRemover_54
+  - first:
+      213: -500702389302305442
+    second: Instruction2-Picsart-BackgroundRemover_55
+  - first:
+      213: -1977663733200937400
+    second: Instruction2-Picsart-BackgroundRemover_56
+  - first:
+      213: -532229845956254043
+    second: Instruction2-Picsart-BackgroundRemover_57
+  - first:
+      213: 5067264741876110137
+    second: Instruction2-Picsart-BackgroundRemover_58
+  - first:
+      213: 6470336617124050791
+    second: Instruction2-Picsart-BackgroundRemover_59
+  - first:
+      213: -578931302257068271
+    second: Instruction2-Picsart-BackgroundRemover_60
+  - first:
+      213: -2025164797034941588
+    second: Instruction2-Picsart-BackgroundRemover_61
+  - first:
+      213: -3859970543244394286
+    second: Instruction2-Picsart-BackgroundRemover_62
+  - first:
+      213: 8240279529487987954
+    second: Instruction2-Picsart-BackgroundRemover_63
+  - first:
+      213: 8446009881175900386
+    second: Instruction2-Picsart-BackgroundRemover_64
+  - first:
+      213: 781401517549701617
+    second: Instruction2-Picsart-BackgroundRemover_65
+  - first:
+      213: 3497279822472137451
+    second: Instruction2-Picsart-BackgroundRemover_66
+  - first:
+      213: 1101788028493606019
+    second: Instruction2-Picsart-BackgroundRemover_67
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 256
+    resizeAlgorithm: 0
+    textureFormat: 50
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_0
+      rect:
+        serializedVersion: 2
+        x: 110
+        y: 889
+        width: 45
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5c1b41d89eab735c0800000000000000
+      internalID: -4235711412261572155
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_1
+      rect:
+        serializedVersion: 2
+        x: 156
+        y: 889
+        width: 39
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f693840ac4aeaf00800000000000000
+      internalID: 1130021744082654963
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_2
+      rect:
+        serializedVersion: 2
+        x: 196
+        y: 889
+        width: 15
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a00e8ef3218ff450800000000000000
+      internalID: 6124756009841721509
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_3
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 875
+        width: 40
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 067f633aa837ce460800000000000000
+      internalID: 7272314537577477984
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_4
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 888
+        width: 48
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df441790ed30b2080800000000000000
+      internalID: -9211264360680176387
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_5
+      rect:
+        serializedVersion: 2
+        x: 458
+        y: 888
+        width: 49
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 058602c358ec01610800000000000000
+      internalID: 1589997740096514128
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_6
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 888
+        width: 49
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e522eeb268f23c10800000000000000
+      internalID: 2031959484890490341
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_7
+      rect:
+        serializedVersion: 2
+        x: 565
+        y: 889
+        width: 47
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4042996043d3ef60800000000000000
+      internalID: 8062520031525879885
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_8
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 787
+        width: 71
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a709f5fb403edd1b0800000000000000
+      internalID: -5630094349613166470
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_9
+      rect:
+        serializedVersion: 2
+        x: 147
+        y: 787
+        width: 72
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd0706eb25427e2b0800000000000000
+      internalID: -5555431677538307877
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_10
+      rect:
+        serializedVersion: 2
+        x: 223
+        y: 787
+        width: 71
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da4789cb4e5a2e640800000000000000
+      internalID: 5107827329226798253
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_11
+      rect:
+        serializedVersion: 2
+        x: 396
+        y: 645
+        width: 229
+        height: 223
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db42dca3e7cf764c0800000000000000
+      internalID: -4294186100591876931
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_12
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 712
+        width: 65
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef1bef3d8c5b56a40800000000000000
+      internalID: 5360890805609214462
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_13
+      rect:
+        serializedVersion: 2
+        x: 141
+        y: 712
+        width: 59
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4738b41f863f9a9f0800000000000000
+      internalID: -456566255150988428
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_14
+      rect:
+        serializedVersion: 2
+        x: 206
+        y: 719
+        width: 23
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63bf529b06b3a0520800000000000000
+      internalID: 2669011015779613494
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_15
+      rect:
+        serializedVersion: 2
+        x: 237
+        y: 712
+        width: 76
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fbd419897ad7ef490800000000000000
+      internalID: -7710587353239040577
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_16
+      rect:
+        serializedVersion: 2
+        x: 332
+        y: 730
+        width: 48
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7fbbda38832f6620800000000000000
+      internalID: 2769471363866148730
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_17
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 672
+        width: 62
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 024d211ff51767990800000000000000
+      internalID: -7388593481774345184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_18
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 671
+        width: 49
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b28cb34ce341a4460800000000000000
+      internalID: 7226610811882162219
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_19
+      rect:
+        serializedVersion: 2
+        x: 189
+        y: 672
+        width: 32
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ad54e650fcffdcd0800000000000000
+      internalID: -2531026356378772059
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_20
+      rect:
+        serializedVersion: 2
+        x: 227
+        y: 671
+        width: 60
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e36c6349a8df53b0800000000000000
+      internalID: -5521456396640689184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_21
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 615
+        width: 44
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 42cbf1c6fb8b035a0800000000000000
+      internalID: -6543527126277047260
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_22
+      rect:
+        serializedVersion: 2
+        x: 115
+        y: 623
+        width: 55
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c9b0cf20cbadcc50800000000000000
+      internalID: 6687189863638284744
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_23
+      rect:
+        serializedVersion: 2
+        x: 378
+        y: 589
+        width: 68
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6fc96c768d14b1920800000000000000
+      internalID: 2962033577636044022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_24
+      rect:
+        serializedVersion: 2
+        x: 523
+        y: 589
+        width: 67
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 835346c09327c5b80800000000000000
+      internalID: -8404717215233592008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_25
+      rect:
+        serializedVersion: 2
+        x: 452
+        y: 589
+        width: 67
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5537d29e5a613c960800000000000000
+      internalID: 7620959896278496085
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_26
+      rect:
+        serializedVersion: 2
+        x: 593
+        y: 589
+        width: 59
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f13305131ab736c0800000000000000
+      internalID: -4163654739361058312
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_27
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 553
+        width: 21
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee41b1abda7b64f30800000000000000
+      internalID: 4559533629538768110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_28
+      rect:
+        serializedVersion: 2
+        x: 409
+        y: 553
+        width: 63
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aca259c552e825050800000000000000
+      internalID: 5787844762242722506
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_29
+      rect:
+        serializedVersion: 2
+        x: 477
+        y: 553
+        width: 64
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c1645896d47ba8e10800000000000000
+      internalID: 2200772911034615324
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_30
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 553
+        width: 22
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0706793bc319bd520800000000000000
+      internalID: 2727933689200074864
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_31
+      rect:
+        serializedVersion: 2
+        x: 561
+        y: 546
+        width: 40
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 00a756906ad2e35d0800000000000000
+      internalID: -3080974903929374208
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_32
+      rect:
+        serializedVersion: 2
+        x: 606
+        y: 553
+        width: 34
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 274f57509cbd1cc50800000000000000
+      internalID: 6683864978421052530
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_33
+      rect:
+        serializedVersion: 2
+        x: 309
+        y: 482
+        width: 62
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0cd8c1b5a3e3dcc70800000000000000
+      internalID: 8992912451286371776
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_34
+      rect:
+        serializedVersion: 2
+        x: 453
+        y: 503
+        width: 54
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8aa6ba0c34d887a90800000000000000
+      internalID: -7315942272528586072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_35
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 510
+        width: 60
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5f21fdbf1be75500800000000000000
+      internalID: 385034814726680411
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_36
+      rect:
+        serializedVersion: 2
+        x: 66
+        y: 261
+        width: 231
+        height: 224
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6c8f099c38b0f950800000000000000
+      internalID: 6480882434191625323
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_37
+      rect:
+        serializedVersion: 2
+        x: 378
+        y: 375
+        width: 274
+        height: 107
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 77e0050de115b2100800000000000000
+      internalID: 84250210822262391
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_38
+      rect:
+        serializedVersion: 2
+        x: 415
+        y: 316
+        width: 86
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 685029e0cc7b60b20800000000000000
+      internalID: 3100367480536827270
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_39
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 316
+        width: 21
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dbfa89eb660a4c030800000000000000
+      internalID: 3514109972400615357
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_40
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 317
+        width: 12
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3de0d88a3e617ec10800000000000000
+      internalID: 2082658519723347667
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_41
+      rect:
+        serializedVersion: 2
+        x: 544
+        y: 316
+        width: 72
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d1b896f342c31a30800000000000000
+      internalID: 4184902075913122256
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_42
+      rect:
+        serializedVersion: 2
+        x: 376
+        y: 253
+        width: 58
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc16687ceb2a77d30800000000000000
+      internalID: 4429187698817130956
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_43
+      rect:
+        serializedVersion: 2
+        x: 440
+        y: 259
+        width: 56
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf694c78a65445180800000000000000
+      internalID: -9127594220926494981
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_44
+      rect:
+        serializedVersion: 2
+        x: 503
+        y: 259
+        width: 59
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 427c319b67a46f580800000000000000
+      internalID: -8793759348622637276
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_45
+      rect:
+        serializedVersion: 2
+        x: 569
+        y: 259
+        width: 82
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d714b14a77deb770800000000000000
+      internalID: 8628570856176752598
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_46
+      rect:
+        serializedVersion: 2
+        x: 43
+        y: 205
+        width: 68
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8230fed7b503ebcf0800000000000000
+      internalID: -234696961063714008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_47
+      rect:
+        serializedVersion: 2
+        x: 117
+        y: 205
+        width: 67
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5d3f194cb2e4cb70800000000000000
+      internalID: 8918502460408937820
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_48
+      rect:
+        serializedVersion: 2
+        x: 188
+        y: 205
+        width: 22
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 564f596f56c6eed30800000000000000
+      internalID: 4462623465955259493
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_49
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 211
+        width: 47
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd39f6695b1f23330800000000000000
+      internalID: 3689276806985126877
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_50
+      rect:
+        serializedVersion: 2
+        x: 259
+        y: 205
+        width: 58
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c9f581d8d6dd0b10800000000000000
+      internalID: 1949450440437791176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_51
+      rect:
+        serializedVersion: 2
+        x: 385
+        y: 215
+        width: 72
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41b220ba1a9cee8f0800000000000000
+      internalID: -509248011650323692
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_52
+      rect:
+        serializedVersion: 2
+        x: 461
+        y: 216
+        width: 35
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4126fee515fafd620800000000000000
+      internalID: 2801150257267696148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_53
+      rect:
+        serializedVersion: 2
+        x: 499
+        y: 216
+        width: 55
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e08193552d8f3520800000000000000
+      internalID: 2684019094391455973
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_54
+      rect:
+        serializedVersion: 2
+        x: 557
+        y: 215
+        width: 84
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 19100cb7feaead2e0800000000000000
+      internalID: -2100107961920650863
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_55
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 167
+        width: 40
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5d527b64d52d09f0800000000000000
+      internalID: -500702389302305442
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_56
+      rect:
+        serializedVersion: 2
+        x: 115
+        y: 167
+        width: 79
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84e9261105ded84e0800000000000000
+      internalID: -1977663733200937400
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_57
+      rect:
+        serializedVersion: 2
+        x: 199
+        y: 167
+        width: 88
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a6aae466c32d98f0800000000000000
+      internalID: -532229845956254043
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_58
+      rect:
+        serializedVersion: 2
+        x: 381
+        y: 173
+        width: 53
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 933136a6f6a825640800000000000000
+      internalID: 5067264741876110137
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_59
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 173
+        width: 24
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 767b1e83fd04bc950800000000000000
+      internalID: 6470336617124050791
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_60
+      rect:
+        serializedVersion: 2
+        x: 467
+        y: 173
+        width: 55
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 117fc934c0937f7f0800000000000000
+      internalID: -578931302257068271
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_61
+      rect:
+        serializedVersion: 2
+        x: 527
+        y: 173
+        width: 68
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c633b1dc85b25e3e0800000000000000
+      internalID: -2025164797034941588
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_62
+      rect:
+        serializedVersion: 2
+        x: 599
+        y: 166
+        width: 58
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d0427eed31ae6ac0800000000000000
+      internalID: -3859970543244394286
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_63
+      rect:
+        serializedVersion: 2
+        x: 43
+        y: 125
+        width: 163
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f4fd0db29a5b5270800000000000000
+      internalID: 8240279529487987954
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_64
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 118
+        width: 95
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e0cde0fc31463570800000000000000
+      internalID: 8446009881175900386
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_65
+      rect:
+        serializedVersion: 2
+        x: 432
+        y: 130
+        width: 15
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f940884a8818da00800000000000000
+      internalID: 781401517549701617
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_66
+      rect:
+        serializedVersion: 2
+        x: 454
+        y: 123
+        width: 69
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: beac79a1875d88030800000000000000
+      internalID: 3497279822472137451
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Instruction2-Picsart-BackgroundRemover_67
+      rect:
+        serializedVersion: 2
+        x: 528
+        y: 130
+        width: 84
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38ca328df565a4f00800000000000000
+      internalID: 1101788028493606019
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Instruction2-Picsart-BackgroundRemover_0: -4235711412261572155
+      Instruction2-Picsart-BackgroundRemover_1: 1130021744082654963
+      Instruction2-Picsart-BackgroundRemover_10: 5107827329226798253
+      Instruction2-Picsart-BackgroundRemover_11: -4294186100591876931
+      Instruction2-Picsart-BackgroundRemover_12: 5360890805609214462
+      Instruction2-Picsart-BackgroundRemover_13: -456566255150988428
+      Instruction2-Picsart-BackgroundRemover_14: 2669011015779613494
+      Instruction2-Picsart-BackgroundRemover_15: -7710587353239040577
+      Instruction2-Picsart-BackgroundRemover_16: 2769471363866148730
+      Instruction2-Picsart-BackgroundRemover_17: -7388593481774345184
+      Instruction2-Picsart-BackgroundRemover_18: 7226610811882162219
+      Instruction2-Picsart-BackgroundRemover_19: -2531026356378772059
+      Instruction2-Picsart-BackgroundRemover_2: 6124756009841721509
+      Instruction2-Picsart-BackgroundRemover_20: -5521456396640689184
+      Instruction2-Picsart-BackgroundRemover_21: -6543527126277047260
+      Instruction2-Picsart-BackgroundRemover_22: 6687189863638284744
+      Instruction2-Picsart-BackgroundRemover_23: 2962033577636044022
+      Instruction2-Picsart-BackgroundRemover_24: -8404717215233592008
+      Instruction2-Picsart-BackgroundRemover_25: 7620959896278496085
+      Instruction2-Picsart-BackgroundRemover_26: -4163654739361058312
+      Instruction2-Picsart-BackgroundRemover_27: 4559533629538768110
+      Instruction2-Picsart-BackgroundRemover_28: 5787844762242722506
+      Instruction2-Picsart-BackgroundRemover_29: 2200772911034615324
+      Instruction2-Picsart-BackgroundRemover_3: 7272314537577477984
+      Instruction2-Picsart-BackgroundRemover_30: 2727933689200074864
+      Instruction2-Picsart-BackgroundRemover_31: -3080974903929374208
+      Instruction2-Picsart-BackgroundRemover_32: 6683864978421052530
+      Instruction2-Picsart-BackgroundRemover_33: 8992912451286371776
+      Instruction2-Picsart-BackgroundRemover_34: -7315942272528586072
+      Instruction2-Picsart-BackgroundRemover_35: 385034814726680411
+      Instruction2-Picsart-BackgroundRemover_36: 6480882434191625323
+      Instruction2-Picsart-BackgroundRemover_37: 84250210822262391
+      Instruction2-Picsart-BackgroundRemover_38: 3100367480536827270
+      Instruction2-Picsart-BackgroundRemover_39: 3514109972400615357
+      Instruction2-Picsart-BackgroundRemover_4: -9211264360680176387
+      Instruction2-Picsart-BackgroundRemover_40: 2082658519723347667
+      Instruction2-Picsart-BackgroundRemover_41: 4184902075913122256
+      Instruction2-Picsart-BackgroundRemover_42: 4429187698817130956
+      Instruction2-Picsart-BackgroundRemover_43: -9127594220926494981
+      Instruction2-Picsart-BackgroundRemover_44: -8793759348622637276
+      Instruction2-Picsart-BackgroundRemover_45: 8628570856176752598
+      Instruction2-Picsart-BackgroundRemover_46: -234696961063714008
+      Instruction2-Picsart-BackgroundRemover_47: 8918502460408937820
+      Instruction2-Picsart-BackgroundRemover_48: 4462623465955259493
+      Instruction2-Picsart-BackgroundRemover_49: 3689276806985126877
+      Instruction2-Picsart-BackgroundRemover_5: 1589997740096514128
+      Instruction2-Picsart-BackgroundRemover_50: 1949450440437791176
+      Instruction2-Picsart-BackgroundRemover_51: -509248011650323692
+      Instruction2-Picsart-BackgroundRemover_52: 2801150257267696148
+      Instruction2-Picsart-BackgroundRemover_53: 2684019094391455973
+      Instruction2-Picsart-BackgroundRemover_54: -2100107961920650863
+      Instruction2-Picsart-BackgroundRemover_55: -500702389302305442
+      Instruction2-Picsart-BackgroundRemover_56: -1977663733200937400
+      Instruction2-Picsart-BackgroundRemover_57: -532229845956254043
+      Instruction2-Picsart-BackgroundRemover_58: 5067264741876110137
+      Instruction2-Picsart-BackgroundRemover_59: 6470336617124050791
+      Instruction2-Picsart-BackgroundRemover_6: 2031959484890490341
+      Instruction2-Picsart-BackgroundRemover_60: -578931302257068271
+      Instruction2-Picsart-BackgroundRemover_61: -2025164797034941588
+      Instruction2-Picsart-BackgroundRemover_62: -3859970543244394286
+      Instruction2-Picsart-BackgroundRemover_63: 8240279529487987954
+      Instruction2-Picsart-BackgroundRemover_64: 8446009881175900386
+      Instruction2-Picsart-BackgroundRemover_65: 781401517549701617
+      Instruction2-Picsart-BackgroundRemover_66: 3497279822472137451
+      Instruction2-Picsart-BackgroundRemover_67: 1101788028493606019
+      Instruction2-Picsart-BackgroundRemover_7: 8062520031525879885
+      Instruction2-Picsart-BackgroundRemover_8: -5630094349613166470
+      Instruction2-Picsart-BackgroundRemover_9: -5555431677538307877
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

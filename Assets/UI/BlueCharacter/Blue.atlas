@@ -1,0 +1,72 @@
+Blue.png
+size:1143,348
+filter:Linear,Linear
+pma:true
+Body
+bounds:2,9,337,406
+rotate:90
+Closed eyes
+bounds:973,8,144,12
+offsets:1,1,146,14
+rotate:90
+Eye pupil_L
+bounds:1095,246,39,39
+offsets:1,1,41,41
+Eye pupil_R
+bounds:844,119,30,33
+offsets:1,1,32,35
+Happy
+bounds:715,116,70,36
+offsets:1,1,72,38
+Hat
+bounds:410,30,316,161
+offsets:1,1,318,163
+rotate:90
+Left arm
+bounds:939,154,131,154
+rotate:90
+Left arm2
+bounds:987,21,131,154
+rotate:90
+Neutral
+bounds:2,2,67,5
+offsets:1,1,69,7
+O_ Mouth
+bounds:876,121,31,43
+rotate:90
+Open eyes
+bounds:573,115,231,140
+rotate:90
+Right arm
+bounds:801,154,67,192
+Right arm2
+bounds:870,154,67,192
+Right arm3
+bounds:715,154,84,192
+Strained Gritted Teeth
+bounds:650,6,107,38
+rotate:90
+Wide Smile
+bounds:573,30,75,83
+eye_white
+bounds:973,287,161,59
+eyebrow_L
+bounds:554,13,56,15
+offsets:1,1,58,17
+eyebrow_R
+bounds:987,7,38,12
+offsets:1,1,40,14
+leg_1
+bounds:932,5,39,147
+leg_2
+bounds:690,10,120,103
+prop_balloon_balloon inflates
+bounds:812,2,118,115
+offsets:1,1,120,117
+prop_balloon_deflated balloon
+bounds:787,119,33,55
+offsets:1,2,35,58
+rotate:90
+prop_balloon_string
+bounds:410,11,17,142
+rotate:90
