@@ -1,0 +1,74 @@
+Yellow.png
+size:2048,512
+filter:Linear,Linear
+pma:true
+Body
+bounds:796,104,337,406
+Body_Back
+bounds:1135,104,337,406
+Closed eyes
+bounds:2032,366,144,12
+offsets:1,1,146,14
+rotate:90
+Eye pupil_L
+bounds:731,31,39,39
+offsets:1,1,41,41
+Eye pupil_R
+bounds:1109,69,30,33
+offsets:1,1,32,35
+Glasses
+bounds:1474,402,267,108
+offsets:0,1,267,109
+Happy
+bounds:1836,307,70,36
+offsets:1,1,72,38
+rotate:90
+Left arm
+bounds:1474,104,131,154
+Left arm2
+bounds:1743,379,131,154
+rotate:90
+Left-arm4
+bounds:1899,356,131,154
+Neutral
+bounds:1681,191,67,5
+offsets:1,1,69,7
+rotate:90
+O_ Mouth
+bounds:1000,19,31,43
+Open eyes
+bounds:1474,260,231,140
+Right arm
+bounds:225,3,67,192
+rotate:90
+Right arm3
+bounds:2,3,67,221
+rotate:90
+Right-arm4
+bounds:1607,73,72,185
+Strained Gritted Teeth
+bounds:1000,64,107,38
+Wide Smile
+bounds:923,19,75,83
+eye_white
+bounds:419,11,161,59
+eyebrow_L
+bounds:923,2,56,15
+offsets:1,1,58,17
+eyebrow_R
+bounds:1707,274,38,12
+offsets:1,1,40,14
+leg_1
+bounds:582,31,39,147
+rotate:90
+leg_2
+bounds:796,14,125,88
+offsets:0,4,125,103
+leg_B
+bounds:1707,288,127,89
+prop_ladder_Back Rail
+bounds:2,268,242,792
+rotate:90
+prop_ladder_Front Rail
+bounds:2,72,194,792
+rotate:90

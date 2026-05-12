@@ -1,0 +1,71 @@
+Red.png
+size:2048,512
+filter:Linear,Linear
+pma:true
+Body
+bounds:1333,164,346,404
+rotate:90
+Closed eyes
+bounds:496,178,144,12
+offsets:1,1,146,14
+Crown
+bounds:1739,234,184,151
+Eye pupil_L
+bounds:498,12,39,39
+offsets:1,1,41,41
+Eye pupil_R
+bounds:2012,477,30,33
+offsets:1,1,32,35
+Happy
+bounds:540,55,70,36
+offsets:1,1,72,38
+Left arm
+bounds:320,19,131,154
+Left arm2
+bounds:187,2,131,160
+Left-arm3
+bounds:1739,101,131,154
+rotate:90
+Neutral
+bounds:2,6,67,5
+offsets:1,1,69,7
+O_ Mouth
+bounds:453,20,31,43
+rotate:90
+Open eyes
+bounds:1739,387,231,123
+offsets:0,17,231,140
+Right arm
+bounds:496,192,67,192
+rotate:90
+Right arm2
+bounds:690,192,67,192
+rotate:90
+Right arm3
+bounds:884,192,67,192
+rotate:90
+Right-arm4
+bounds:302,175,84,192
+rotate:90
+Strained Gritted Teeth
+bounds:1972,403,107,38
+rotate:90
+Wide Smile
+bounds:540,93,75,83
+eye_white
+bounds:1078,200,161,59
+eyebrow_L
+bounds:1241,226,76,33
+glass
+bounds:2,186,298,73
+leg_1
+bounds:1925,238,39,147
+leg_2
+bounds:453,53,120,85
+offsets:0,1,120,103
+rotate:90
+prop_grip
+bounds:2,261,249,1329
+rotate:90
+prop_hook
+bounds:2,13,183,171
