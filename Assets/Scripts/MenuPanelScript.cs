@@ -11,7 +11,7 @@ public class MenuPanelScript : MonoBehaviour
     private static readonly int GeniusHash = Animator.StringToHash("Genius");
     [Header("Score Thresholds")]
     public int proScore, masterScore, legendScore, geniusScore;
-
+    public GameObject proMan, masterMan, legendMan, geniusMan;
     [Header("Animators")]
     public Animator classButtonBannerAnim;
     public Animator beatClockBannerAnim;
@@ -60,43 +60,92 @@ public class MenuPanelScript : MonoBehaviour
         else if (LogoRank == 4)
             logoAnimator.SetTrigger(GeniusHash);
     }
-
     public void CheckForAllMaxed()
     {
-        //Debug.LogError("Checking for all maxed...");
-        if (PlayerPrefs.GetInt("allPro",0)==0 && tempClassicScore >= proScore 
-            && tempClockScore >= proScore && tempRackUpScore >= proScore)
+        // Check highest tier first to prevent lower-tier triggers from overriding
+        if (IsTierMet("allGenius", geniusScore))
         {
-            PlayerPrefs.SetInt("allPro", 1);
-            AllMaxedBanner.SetTrigger("Pro");
-            LogoRank = 1;
-            DOVirtual.DelayedCall(3, CheckLogoTransition);
+            UnlockTier("allGenius", "Genius", 4, geniusMan, 10.75f);
         }
-        if (PlayerPrefs.GetInt("allMaster",0)==0 && tempClassicScore >= masterScore 
-            && tempClockScore >= masterScore && tempRackUpScore >= masterScore)
+        else if (IsTierMet("allLegend", legendScore))
         {
-            PlayerPrefs.SetInt("allMaster", 1);
-            AllMaxedBanner.SetTrigger("Master");
-            LogoRank = 2;
-            DOVirtual.DelayedCall(3, CheckLogoTransition);
+            UnlockTier("allLegend", "Legend", 3, legendMan, 10.26f);
         }
-        if (PlayerPrefs.GetInt("allLegend",0)==0 && tempClassicScore >= legendScore 
-            && tempClockScore >= legendScore && tempRackUpScore >= legendScore)
+        else if (IsTierMet("allMaster", masterScore))
         {
-            PlayerPrefs.SetInt("allLegend", 1); 
-            AllMaxedBanner.SetTrigger("Legend");
-            LogoRank = 3;
-            DOVirtual.DelayedCall(3, CheckLogoTransition);
+            UnlockTier("allMaster", "Master", 2, masterMan, 9.7f);
         }
-        if(PlayerPrefs.GetInt("allGenius",0)==0 && tempClassicScore >= geniusScore 
-            && tempClockScore >= geniusScore && tempRackUpScore >= geniusScore)
+        else if (IsTierMet("allPro", proScore))
         {
-            PlayerPrefs.SetInt("allGenius", 1);
-            AllMaxedBanner.SetTrigger("Genius");
-            LogoRank = 4;
-            DOVirtual.DelayedCall(3, CheckLogoTransition);
+            UnlockTier("allPro", "Pro", 1, proMan, 11.5f);
         }
     }
+
+    private bool IsTierMet(string prefKey, int scoreThreshold,int rankIt=0)
+    {
+        return PlayerPrefs.GetInt(prefKey, 0) == 0 &&
+               tempClassicScore >= scoreThreshold &&
+               tempClockScore >= scoreThreshold &&
+               tempRackUpScore >= scoreThreshold;
+               
+
+    }
+
+    private void UnlockTier(string prefKey, string triggerName, int rank,GameObject logoMan, float delay)
+    {
+        if (rank <= LogoRank)
+            return; // Prevent unlocking lower tiers if a higher tier is already unlocked
+        //Debug.LogError($"Unlocking tier: {rank}");
+        PlayerPrefs.SetInt(prefKey, 1);
+        PlayerPrefs.Save(); // Ensure persistence
+
+        AllMaxedBanner.SetTrigger(triggerName);
+        LogoRank = rank;
+
+        // Clean up previous DOTween delays if they exist to prevent overlaps
+        DOTween.Kill("LogoTransitionTask");
+        DOTween.Kill("LogoMan");
+
+        if (logoMan != null)
+            DOVirtual.DelayedCall(3f, () => logoMan.SetActive(true)).SetId("LogoManTask");
+        DOVirtual.DelayedCall(delay, CheckLogoTransition).SetId("LogoTransitionTask");
+    }
+    //public void CheckForAllMaxed()
+    //{
+    //    //Debug.LogError("Checking for all maxed...");
+    //    if (PlayerPrefs.GetInt("allPro",0)==0 && tempClassicScore >= proScore 
+    //        && tempClockScore >= proScore && tempRackUpScore >= proScore)
+    //    {
+    //        PlayerPrefs.SetInt("allPro", 1);
+    //        AllMaxedBanner.SetTrigger("Pro");
+    //        LogoRank = 1;
+    //        DOVirtual.DelayedCall(3, CheckLogoTransition);
+    //    }
+    //    if (PlayerPrefs.GetInt("allMaster",0)==0 && tempClassicScore >= masterScore 
+    //        && tempClockScore >= masterScore && tempRackUpScore >= masterScore)
+    //    {
+    //        PlayerPrefs.SetInt("allMaster", 1);
+    //        AllMaxedBanner.SetTrigger("Master");
+    //        LogoRank = 2;
+    //        DOVirtual.DelayedCall(3, CheckLogoTransition);
+    //    }
+    //    if (PlayerPrefs.GetInt("allLegend",0)==0 && tempClassicScore >= legendScore 
+    //        && tempClockScore >= legendScore && tempRackUpScore >= legendScore)
+    //    {
+    //        PlayerPrefs.SetInt("allLegend", 1); 
+    //        AllMaxedBanner.SetTrigger("Legend");
+    //        LogoRank = 3;
+    //        DOVirtual.DelayedCall(3, CheckLogoTransition);
+    //    }
+    //    if(PlayerPrefs.GetInt("allGenius",0)==0 && tempClassicScore >= geniusScore 
+    //        && tempClockScore >= geniusScore && tempRackUpScore >= geniusScore)
+    //    {
+    //        PlayerPrefs.SetInt("allGenius", 1);
+    //        AllMaxedBanner.SetTrigger("Genius");
+    //        LogoRank = 4;
+    //        DOVirtual.DelayedCall(3, CheckLogoTransition);
+    //    }
+    //}
     void CheckLogoTransition()
     {
         if(LogoRank == 1)
@@ -113,7 +162,12 @@ public class MenuPanelScript : MonoBehaviour
             logoAnimator.SetBool("LegendBool", true);
         }
         else if (LogoRank == 4)
+        {
+            logoAnimator.SetBool("ProBool", true);
+            logoAnimator.SetBool("MasterBool", true);
+            logoAnimator.SetBool("LegendBool", true);
             logoAnimator.SetBool("GeniusBool", true);
+        }
     }
 
     void OnDestroy()
@@ -194,5 +248,12 @@ public class MenuPanelScript : MonoBehaviour
     {
         policyPanel.SetActive(false);
         PlayerPrefs.SetInt("FirstTimePolicy", 1);
+    }
+    private void OnDisable()
+    {
+        proMan.SetActive(false);
+        masterMan.SetActive(false);
+        legendMan.SetActive(false);
+        geniusMan.SetActive(false);
     }
 }

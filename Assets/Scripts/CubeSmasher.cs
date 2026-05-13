@@ -2211,12 +2211,22 @@ public class CubeSmasher : MonoBehaviour
     public void SetRackUpScores()
     {
         var empty = new HighScores();
-        empty.bestScore = 510;
+        empty.bestScore = 100;
         // Overwrite each save file with an empty/default HighScores
         SaveHighScoresClassic(SaveClassic, empty);
         SaveHighScoresSingle(SaveRackup, empty);
         empty.bestScore -= 10;
         SaveHighScoresSingle(SaveClock,empty);
-
+    }
+    [Button]
+    public void SetRackUpScores2()
+    {
+        var empty = new HighScores();
+        empty.bestScore = 100;
+        // Overwrite each save file with an empty/default HighScores
+        SaveHighScoresClassic(SaveClassic, empty);
+        SaveHighScoresSingle(SaveRackup, empty);
+        
+        SaveHighScoresSingle(SaveClock, empty);
     }
 }
