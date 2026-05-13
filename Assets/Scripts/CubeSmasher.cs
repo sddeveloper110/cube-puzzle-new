@@ -298,6 +298,8 @@ public class CubeSmasher : MonoBehaviour
         {
             activeSavePath = SaveClassic;
             highScores = LoadHighScoresClassic(activeSavePath);
+            Debug.LogError("hi " + level);
+            level = 1;
         }
         else
         {
@@ -362,7 +364,7 @@ public class CubeSmasher : MonoBehaviour
                     :
                     // After level 3 → drop interval decreases by 0.1s per level (floor = 0.1s)
                     Mathf.Max(0.1f, 1f - 0.1f * (level - 3));
-
+            Debug.LogError("interval " + interval.ToString("f2"));
             if (TryGetNextAddBoxAnchoredPosition(out var nextPos) && !stopAddingBox)
             {
                 if (!upComingBox.gameObject.activeInHierarchy)
@@ -1599,7 +1601,7 @@ public class CubeSmasher : MonoBehaviour
         moves = 0;
         //movesLabel.text = "0";
         lastBeepSecond = -999;
-        level = 1;
+        //level = 1;
         //UpdateHearts();
         levelTimer = 0f;
         timeLeft = gameMode is Mode.Clock ? k_startTime : 0f;
@@ -2207,26 +2209,16 @@ public class CubeSmasher : MonoBehaviour
             Debug.LogError($"CubeSmasher: failed to clear highscores - {ex}");
         }
     }
-    [Button]
-    public void SetRackUpScores()
-    {
-        var empty = new HighScores();
-        empty.bestScore = 100;
-        // Overwrite each save file with an empty/default HighScores
-        SaveHighScoresClassic(SaveClassic, empty);
-        SaveHighScoresSingle(SaveRackup, empty);
-        empty.bestScore -= 10;
-        SaveHighScoresSingle(SaveClock,empty);
-    }
-    [Button]
-    public void SetRackUpScores2()
-    {
-        var empty = new HighScores();
-        empty.bestScore = 100;
-        // Overwrite each save file with an empty/default HighScores
-        SaveHighScoresClassic(SaveClassic, empty);
-        SaveHighScoresSingle(SaveRackup, empty);
-        
-        SaveHighScoresSingle(SaveClock, empty);
-    }
+    //[Button]
+    //public void SetRackUpScores()
+    //{
+    //    var empty = new HighScores();
+    //    empty.bestScore = 100;
+    //    // Overwrite each save file with an empty/default HighScores
+    //    SaveHighScoresClassic(SaveClassic, empty);
+    //    SaveHighScoresSingle(SaveRackup, empty);
+    //    empty.bestScore -= 10;
+    //    SaveHighScoresSingle(SaveClock,empty);
+    //}
+    
 }
