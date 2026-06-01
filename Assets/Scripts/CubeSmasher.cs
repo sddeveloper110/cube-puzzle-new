@@ -357,13 +357,14 @@ public class CubeSmasher : MonoBehaviour
             }
 
             levelTimer += dt;
-            var interval =
-                // From level 1 to 3 → drop interval decreases by 1 sec per level (floor = 1s)
-                level <= 3
-                    ? Mathf.Max(1f, 3f - (level - 1))
-                    :
-                    // After level 3 → drop interval decreases by 0.1s per level (floor = 0.1s)
-                    Mathf.Max(0.1f, 1f - 0.1f * (level - 3));
+
+            // Slowed down logic:
+            // 1. Levels 1-3: Drop interval decreases by 0.5s per level (instead of 1s)
+            // 2. Levels 4+: Drop interval decreases by 0.05s per level (instead of 0.1s)
+            var interval = level <= 3
+                ? Mathf.Max(1.0f, 3.0f - (0.5f * (level - 1)))
+                : Mathf.Max(0.1f, 1.0f - (0.05f * (level - 3)));
+
             Debug.LogError("interval " + interval.ToString("f2"));
             if (TryGetNextAddBoxAnchoredPosition(out var nextPos) && !stopAddingBox)
             {
