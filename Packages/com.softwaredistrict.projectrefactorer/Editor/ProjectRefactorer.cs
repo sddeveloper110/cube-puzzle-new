@@ -30,26 +30,6 @@ namespace SoftwareDistrict.Framework.Refactoring
         private string globalFolderSuffix = "";
         private bool globalRenameAssets = false;
 
-        // Preset Rule Definition
-        [System.Serializable]
-        public class RefactorRule
-        {
-            public enum RuleType { Class, Namespace, Function, Variable, Folder }
-            public RuleType type = RuleType.Class;
-            public string searchName = "";
-            public string replaceName = "";
-            public bool strictMatch = true;
-        }
-
-        [System.Serializable]
-        public class RefactorPreset
-        {
-            public List<RefactorRule> rules = new List<RefactorRule>();
-        }
-
-        private List<RefactorRule> customRules = new List<RefactorRule>();
-        private RefactorRule newRule = new RefactorRule();
-
         // Individual refactor parameters (foldouts)
         private bool showIndividualRefactors = false;
         private string scriptSearchPrefix = "OldPrefix";
@@ -71,10 +51,10 @@ namespace SoftwareDistrict.Framework.Refactoring
 
         // Obfuscation & Junk Code injection parameters
         private bool showObfuscation = false;
-        private bool optJunkAppendToEnd = false;
-        private bool optJunkInsideClassFields = false;
         private bool optJunkInFunctions = true;
         private bool optJunkUncalledFunctions = true;
+        private bool optJunkAppendToEnd = false;
+        private bool optJunkInsideClassFields = false;
         private bool optJunkGenerateFiles = false;
         private int junkFileCount = 10;
 
@@ -85,14 +65,13 @@ namespace SoftwareDistrict.Framework.Refactoring
 
         // Scroll positions
         private Vector2 scrollPosition;
-        private Vector2 rulesScrollPosition;
         private Vector2 dryRunScrollPosition;
 
         [MenuItem("Tools/Project Refactorer")]
         public static void ShowWindow()
         {
             ProjectRefactorer window = GetWindow<ProjectRefactorer>("Project Refactorer");
-            window.minSize = new Vector2(500, 700);
+            window.minSize = new Vector2(500, 600);
         }
 
         private void OnGUI()
@@ -105,7 +84,7 @@ namespace SoftwareDistrict.Framework.Refactoring
 
             scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
 
-            // --- Section 1: Global Execution & Dry Run Settings ---
+            // --- Section 1: Dry Run Settings ---
             DrawSectionHeader("1. Execution Settings");
             isDryRun = EditorGUILayout.Toggle(new GUIContent("Dry Run Mode", "If enabled, changes are calculated and displayed below, but NOT written to disk until you click Apply."), isDryRun);
             
@@ -152,81 +131,8 @@ namespace SoftwareDistrict.Framework.Refactoring
             }
             GUILayout.Space(15);
 
-            // --- Section 3: Multi-Rule Presets (Rules Suite) ---
-            DrawSectionHeader("3. Multi-Rule Presets");
-            
-            // Add rule row
-            GUILayout.BeginHorizontal();
-            newRule.type = (RefactorRule.RuleType)EditorGUILayout.EnumPopup(newRule.type, GUILayout.Width(100));
-            newRule.searchName = EditorGUILayout.TextField(newRule.searchName);
-            newRule.replaceName = EditorGUILayout.TextField(newRule.replaceName);
-            if (GUILayout.Button("Add Rule", GUILayout.Width(70)))
-            {
-                if (!string.IsNullOrEmpty(newRule.searchName) && !string.IsNullOrEmpty(newRule.replaceName))
-                {
-                    customRules.Add(new RefactorRule {
-                        type = newRule.type,
-                        searchName = newRule.searchName,
-                        replaceName = newRule.replaceName,
-                        strictMatch = newRule.strictMatch
-                    });
-                    newRule.searchName = "";
-                    newRule.replaceName = "";
-                }
-            }
-            GUILayout.EndHorizontal();
-
-            if (newRule.type == RefactorRule.RuleType.Function)
-            {
-                newRule.strictMatch = EditorGUILayout.Toggle("Strict Match (requires '(' or '<')", newRule.strictMatch);
-            }
-
-            GUILayout.Space(5);
-
-            // Display current rules
-            if (customRules.Count > 0)
-            {
-                GUILayout.Label("Active Rules:", EditorStyles.miniBoldLabel);
-                rulesScrollPosition = EditorGUILayout.BeginScrollView(rulesScrollPosition, GUILayout.Height(120));
-                for (int i = 0; i < customRules.Count; i++)
-                {
-                    GUILayout.BeginHorizontal();
-                    GUILayout.Label($"[{customRules[i].type}] {customRules[i].searchName} -> {customRules[i].replaceName}", EditorStyles.miniLabel);
-                    if (GUILayout.Button("X", GUILayout.Width(25)))
-                    {
-                        customRules.RemoveAt(i);
-                        break;
-                    }
-                    GUILayout.EndHorizontal();
-                }
-                EditorGUILayout.EndScrollView();
-
-                GUILayout.BeginHorizontal();
-                if (GUILayout.Button("Save Preset", GUILayout.Height(25))) { SavePresetToFile(); }
-                if (GUILayout.Button("Load Preset", GUILayout.Height(25))) { LoadPresetFromFile(); }
-                if (GUILayout.Button("Clear Rules", GUILayout.Height(25))) { customRules.Clear(); }
-                GUILayout.EndHorizontal();
-
-                GUILayout.Space(5);
-                if (GUILayout.Button("Execute All Rules", GUILayout.Height(30)))
-                {
-                    string msg = isDryRun ? "Simulate all active rules?" : "Run all active rules live?";
-                    if (EditorUtility.DisplayDialog("Execute Rules Suite", msg, "Yes", "Cancel"))
-                    {
-                        ExecuteRulesSuite();
-                    }
-                }
-            }
-            else
-            {
-                GUILayout.BeginHorizontal();
-                if (GUILayout.Button("Load Preset File", GUILayout.Height(25))) { LoadPresetFromFile(); }
-                GUILayout.EndHorizontal();
-            }
-            GUILayout.Space(15);
-
-            // --- Section 4: Individual Refactors (Foldout) ---
-            showIndividualRefactors = EditorGUILayout.BeginFoldoutHeaderGroup(showIndividualRefactors, "4. Individual Refactor Tools");
+            // --- Section 3: Individual Refactors (Foldout) ---
+            showIndividualRefactors = EditorGUILayout.BeginFoldoutHeaderGroup(showIndividualRefactors, "3. Individual Refactor Tools");
             if (showIndividualRefactors)
             {
                 GUILayout.Space(5);
@@ -285,8 +191,8 @@ namespace SoftwareDistrict.Framework.Refactoring
             EditorGUILayout.EndFoldoutHeaderGroup();
             GUILayout.Space(15);
 
-            // --- Section 5: Obfuscation & Junk Code ---
-            showObfuscation = EditorGUILayout.BeginFoldoutHeaderGroup(showObfuscation, "5. Obfuscation & Junk Code Injection");
+            // --- Section 4: Obfuscation & Junk Code ---
+            showObfuscation = EditorGUILayout.BeginFoldoutHeaderGroup(showObfuscation, "4. Obfuscation & Junk Code Injection");
             if (showObfuscation)
             {
                 GUILayout.Label("Injection Options:", EditorStyles.miniBoldLabel);
@@ -317,7 +223,7 @@ namespace SoftwareDistrict.Framework.Refactoring
             EditorGUILayout.EndFoldoutHeaderGroup();
             GUILayout.Space(15);
 
-            // --- Section 6: Dry Run Logs (Visible if changes are recorded) ---
+            // --- Section 5: Dry Run Logs (Visible if changes are recorded) ---
             if (isDryRun && pendingChanges.Count > 0)
             {
                 DrawSectionHeader("Planned Dry-Run Modifications");
@@ -809,7 +715,6 @@ namespace SoftwareDistrict.Framework.Refactoring
                             continue;
 
                         string ext = Path.GetExtension(assetPath).ToLower();
-                        // Filter for common asset extensions (excluding folders, scripts, definitions, etc.)
                         bool isAssetToRename = ext == ".png" || ext == ".jpg" || ext == ".jpeg" || ext == ".tga" || ext == ".psd" ||
                                                ext == ".wav" || ext == ".mp3" || ext == ".ogg" ||
                                                ext == ".prefab" || ext == ".mat" || ext == ".fbx" ||
@@ -837,74 +742,10 @@ namespace SoftwareDistrict.Framework.Refactoring
             Debug.Log("Global Batch Refactor calculated successfully.");
         }
 
-        // --- Rules Suite presets ---
-        private void ExecuteRulesSuite()
-        {
-            AssetDatabase.StartAssetEditing();
-            try
-            {
-                foreach (var rule in customRules)
-                {
-                    switch (rule.type)
-                    {
-                        case RefactorRule.RuleType.Class:
-                            ExecuteClassRefactor(rule.searchName, rule.replaceName, rule.strictMatch);
-                            break;
-                        case RefactorRule.RuleType.Namespace:
-                            ExecuteNamespaceRefactor(rule.searchName, rule.replaceName);
-                            break;
-                        case RefactorRule.RuleType.Function:
-                            ExecuteFunctionRefactor(rule.searchName, rule.replaceName, rule.strictMatch);
-                            break;
-                        case RefactorRule.RuleType.Variable:
-                            ExecuteVariableRefactor(rule.searchName, rule.replaceName);
-                            break;
-                        case RefactorRule.RuleType.Folder:
-                            ExecuteFolderRefactor(rule.searchName, rule.replaceName);
-                            break;
-                    }
-                }
-            }
-            finally
-            {
-                AssetDatabase.StopAssetEditing();
-            }
-            AssetDatabase.Refresh();
-            Debug.Log("Execution of Rules Suite completed.");
-        }
-
-        private void SavePresetToFile()
-        {
-            string path = EditorUtility.SaveFilePanel("Save Refactoring Preset", Application.dataPath, "refactor_preset", "json");
-            if (!string.IsNullOrEmpty(path))
-            {
-                RefactorPreset preset = new RefactorPreset { rules = customRules };
-                string json = JsonUtility.ToJson(preset, true);
-                File.WriteAllText(path, json);
-                Debug.Log($"Preset saved to {path}");
-            }
-        }
-
-        private void LoadPresetFromFile()
-        {
-            string path = EditorUtility.OpenFilePanel("Load Refactoring Preset", Application.dataPath, "json");
-            if (!string.IsNullOrEmpty(path))
-            {
-                string json = File.ReadAllText(path);
-                RefactorPreset preset = JsonUtility.FromJson<RefactorPreset>(json);
-                if (preset != null && preset.rules != null)
-                {
-                    customRules = preset.rules;
-                    Debug.Log($"Preset loaded with {customRules.Count} rules from {path}");
-                }
-            }
-        }
-
         // --- Obfuscation & Junk Code ---
 
         private void InjectJunkCodeToAllScripts()
         {
-            // 1. Generate separate files if selected
             if (optJunkGenerateFiles)
             {
                 GenerateJunkFiles();
@@ -965,19 +806,16 @@ namespace SoftwareDistrict.Framework.Refactoring
                         if (!fileContent.Contains("// <RefactorerFuncStart_Junk>") && !fileContent.Contains("// <RefactorerFuncEnd_Junk>"))
                         {
                             var matches = Regex.Matches(fileContent, @"\b(void|int|float|string|bool)\s+([a-zA-Z0-9_]+)\s*\([^)]*\)\s*\{");
-                            // Loop backwards so insertions do not shift indices of remaining matches
                             for (int i = matches.Count - 1; i >= 0; i--)
                             {
                                 var match = matches[i];
                                 string retType = match.Groups[1].Value;
                                 int openBraceIndex = match.Index + match.Length - 1;
 
-                                // Randomly inject (70% probability)
                                 if (UnityEngine.Random.value > 0.3f)
                                 {
                                     string suffix = UnityEngine.Random.Range(1000, 9999).ToString();
                                     
-                                    // If void return type, randomly choose between Start and End
                                     if (retType == "void" && UnityEngine.Random.value > 0.5f)
                                     {
                                         int closeBraceIndex = FindMatchingBrace(fileContent, openBraceIndex);
