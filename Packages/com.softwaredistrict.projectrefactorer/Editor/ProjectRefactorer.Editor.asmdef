@@ -1,0 +1,16 @@
+{
+    "name": "ProjectRefactorer.Editor",
+    "rootNamespace": "SoftwareDistrict.Framework.Refactoring",
+    "references": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

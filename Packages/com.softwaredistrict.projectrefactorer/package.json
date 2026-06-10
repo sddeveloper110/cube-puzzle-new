@@ -1,0 +1,10 @@
+{
+  "name": "com.softwaredistrict.projectrefactorer",
+  "version": "1.0.0",
+  "displayName": "Project Automation Refactorer",
+  "description": "Automated tools for renaming assets, script identifiers, functions, and structural additions safely.",
+  "unity": "2020.3",
+  "author": {
+    "name": "Software District"
+  }
+}
