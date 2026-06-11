@@ -1,0 +1,10 @@
+{
+  "name": "com.softwaredistrict.playerprefseditor",
+  "version": "1.0.0",
+  "displayName": "Software District PlayerPrefs Editor",
+  "description": "Generic PlayerPrefs editor for fetching, updating, and initializing keys dynamically from codebase scanning and registry.",
+  "unity": "2020.3",
+  "author": {
+    "name": "Software District"
+  }
+}

@@ -6,7 +6,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
 
 public class TutorialManager : MonoBehaviour
 {
@@ -1147,6 +1146,82 @@ public class TutorialManager : MonoBehaviour
         cubeSmasher.lineSpawner.SetActive(true);
 
         yield return new WaitForSeconds(1.8f);
+
+        Transform bgTransform = null;
+        var allTransforms = tutorialCompletedPanel.GetComponentsInChildren<Transform>(true);
+        foreach (var t in allTransforms)
+        {
+            if (t.name == "BG")
+            {
+                bgTransform = t;
+                break;
+            }
+        }
+
+        if (bgTransform != null)
+        {
+            // Destroy any existing custom mode buttons first to support clean manual rewatch
+            List<GameObject> toDestroy = new List<GameObject>();
+            foreach (Transform child in bgTransform)
+            {
+                if (child.name.StartsWith("ModeButton_"))
+                {
+                    toDestroy.Add(child.gameObject);
+                }
+            }
+            foreach (var go in toDestroy)
+            {
+                DestroyImmediate(go);
+            }
+
+            // Find texts
+            TextMeshProUGUI text1 = null;
+            TextMeshProUGUI text2 = null;
+            TextMeshProUGUI text3 = null;
+            
+            foreach (Transform child in bgTransform)
+            {
+                var tmp = child.GetComponent<TextMeshProUGUI>();
+                if (tmp != null)
+                {
+                    if (child.name.Contains("(2)")) text2 = tmp;
+                    else if (child.name.Contains("(1)")) text1 = tmp;
+                    else if (child.name.Contains("(3)")) text3 = tmp;
+                }
+            }
+
+            // Update texts
+            if (text2 != null)
+            {
+                text2.text = "there are 3 ways to play cube smasher.";
+                text2.fontSize = 36;
+                text2.rectTransform.anchoredPosition = new Vector2(0f, -50f);
+                text2.rectTransform.sizeDelta = new Vector2(text2.rectTransform.sizeDelta.x, 80f);
+            }
+            if (text1 != null)
+            {
+                text1.text = "Pick how you want to play";
+                text1.fontSize = 28;
+                text1.rectTransform.anchoredPosition = new Vector2(0f, -140f);
+                text1.rectTransform.sizeDelta = new Vector2(text1.rectTransform.sizeDelta.x, 80f);
+            }
+            if (text3 != null)
+            {
+                text3.gameObject.SetActive(false);
+            }
+
+            // Create buttons
+            Button originalButton = bgTransform.GetComponentInChildren<Button>(true);
+            if (originalButton != null)
+            {
+                originalButton.gameObject.SetActive(false);
+                
+                CreateModeButton(originalButton, bgTransform, "Rack up points: Beginner.", "Play free style and work to rack up points", CubeSmasher.Mode.Rackup, -300f);
+                CreateModeButton(originalButton, bgTransform, "Beat the clock: Intermediate:", "Race against the clock and clear the grid before time", CubeSmasher.Mode.Clock, -470f);
+                CreateModeButton(originalButton, bgTransform, "Classic: Advanced.", "Cubes get added faster. Clear the grid before the Cubes fill it back up.", CubeSmasher.Mode.Classic, -640f);
+            }
+        }
+
         tutorialCompletedPanel.SetActive(true);
         //welcomeText.gameObject.SetActive(true);
         //welcomeText.text = " Time to play the \nCUBE SMASHER";
@@ -1159,6 +1234,56 @@ public class TutorialManager : MonoBehaviour
         }
 
         //EndTurotial();
+    }
+
+    private void CreateModeButton(Button template, Transform parent, string title, string description, CubeSmasher.Mode mode, float posY)
+    {
+        Button btn = Instantiate(template, parent);
+        btn.name = "ModeButton_" + mode.ToString();
+        btn.gameObject.SetActive(true);
+
+        // Position it vertically
+        RectTransform rt = btn.GetComponent<RectTransform>();
+        rt.anchorMin = new Vector2(0.5f, 1f);
+        rt.anchorMax = new Vector2(0.5f, 1f);
+        rt.pivot = new Vector2(0.5f, 0.5f);
+        rt.anchoredPosition = new Vector2(0f, posY);
+        rt.sizeDelta = new Vector2(640f, 150f);
+
+        // Set rich text and force text rect to fill the button bounds with margins
+        TextMeshProUGUI tmpText = btn.GetComponentInChildren<TextMeshProUGUI>();
+        if (tmpText != null)
+        {
+            RectTransform textRt = tmpText.GetComponent<RectTransform>();
+            textRt.anchorMin = Vector2.zero;
+            textRt.anchorMax = Vector2.one;
+            textRt.pivot = new Vector2(0.5f, 0.5f);
+            textRt.offsetMin = new Vector2(20f, 10f);
+            textRt.offsetMax = new Vector2(-20f, -10f);
+
+            tmpText.fontStyle = FontStyles.Normal; // Strip any default uppercase constraints from template
+            tmpText.enableWordWrapping = true;     // Force word wrapping to prevent horizontal overflow!
+            tmpText.enableAutoSizing = false;
+            tmpText.text = $"<b>{title}</b>\n<size=20>{description}</size>";
+            tmpText.fontSize = 40;
+            tmpText.alignment = TextAlignmentOptions.Center;
+            tmpText.lineSpacing = 2f;
+        }
+
+        // Set onClick listener
+        btn.onClick.RemoveAllListeners();
+        btn.onClick.AddListener(() => {
+            EndTurotialWithMode(mode);
+        });
+    }
+
+    private void EndTurotialWithMode(CubeSmasher.Mode mode)
+    {
+        if (cubeSmasher != null)
+        {
+            cubeSmasher.gameMode = mode;
+        }
+        EndTurotial();
     }
     [SerializeField] private float typingSpeed = 0.03f;
     Coroutine typingCoroutine;

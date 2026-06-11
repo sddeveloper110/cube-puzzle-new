@@ -1,5 +1,11 @@
 {
   "dependencies": {
+    "com.softwaredistrict.playerprefseditor": {
+      "version": "file:com.softwaredistrict.playerprefseditor",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.softwaredistrict.projectrefactorer": {
       "version": "file:com.softwaredistrict.projectrefactorer",
       "depth": 0,

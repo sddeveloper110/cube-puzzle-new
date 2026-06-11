@@ -23,74 +23,234 @@ namespace SoftwareDistrict.Framework.Refactoring
         private bool isDryRun = true;
         private List<PendingFileChange> pendingChanges = new List<PendingFileChange>();
 
-        // One-Click Batch Refactorer parameters
-        private string globalScriptPrefix = "";
-        private string globalScriptSuffix = "";
-        private string globalFolderPrefix = "";
-        private string globalFolderSuffix = "";
-        private bool globalRenameAssets = false;
+        // Pure C# Manual Revert Subsystem
+        [System.Serializable]
+        public class RenameRecord
+        {
+            public string oldPath;
+            public string newPath;
+            public string oldName;
+            public string newName;
+            public bool isFolder;
+        }
 
-        // Individual refactor parameters (foldouts)
-        private bool showIndividualRefactors = false;
-        private string scriptSearchPrefix = "OldPrefix";
-        private string scriptReplacePrefix = "NewPrefix";
-        private bool scriptMatchExact = false;
+        [System.Serializable]
+        public class TextChangeRecord
+        {
+            public string filePath;
+            public string oldText;
+            public string newText;
+        }
 
-        private string namespaceSearchName = "OldNamespace";
-        private string namespaceReplaceName = "NewNamespace";
+        [System.Serializable]
+        public class RefactorHistory
+        {
+            public List<RenameRecord> renames = new List<RenameRecord>();
+            public List<TextChangeRecord> textChanges = new List<TextChangeRecord>();
+        }
 
-        private string functionSearchName = "OldFunctionName";
-        private string functionReplaceName = "NewFunctionName";
-        private bool functionRenameStrict = true;
+        private RefactorHistory activeHistory = new RefactorHistory();
 
-        private string identifierSearchName = "oldVariable";
-        private string identifierReplaceName = "newVariable";
+        // Renaming Parameters
+        public enum AffixType { Prefix, Suffix }
+        private string affixString = "MySD";
+        private AffixType affixType = AffixType.Prefix;
 
-        private string assetSearchPrefix = "Placeholder";
-        private string assetReplacePrefix = "Final";
+        private DefaultAsset targetFolder;
+        private bool renameScripts = true;
+        private bool renameFolders = true;
+        private bool renameAssets = true;
 
-        // Obfuscation & Junk Code injection parameters
-        private bool showObfuscation = false;
+        private Dictionary<string, string> fileContentCache = new Dictionary<string, string>();
+
+        // Obfuscation & Junk Code parameters
         private bool optJunkInFunctions = true;
         private bool optJunkUncalledFunctions = true;
-        private bool optJunkAppendToEnd = false;
-        private bool optJunkInsideClassFields = false;
-        private bool optJunkGenerateFiles = false;
-        private int junkFileCount = 10;
-
-        private const string JunkStartMarker = "// <RefactorerJunkCode_Start>";
-        private const string JunkEndMarker = "// <RefactorerJunkCode_End>";
-        private const string ClassJunkStartMarker = "// <RefactorerClassJunk_Start>";
-        private const string ClassJunkEndMarker = "// <RefactorerClassJunk_End>";
 
         // Scroll positions
         private Vector2 scrollPosition;
         private Vector2 dryRunScrollPosition;
 
-        [MenuItem("Tools/Project Refactorer")]
+        [MenuItem("Software District/Refactoring Tool")]
         public static void ShowWindow()
         {
-            ProjectRefactorer window = GetWindow<ProjectRefactorer>("Project Refactorer");
-            window.minSize = new Vector2(500, 600);
+            ProjectRefactorer window = GetWindow<ProjectRefactorer>("Refactoring Tool");
+            window.minSize = new Vector2(480, 680);
         }
 
         private void OnGUI()
         {
             // Title Header
-            GUILayout.Space(10);
-            GUILayout.Label("Project-Wide Mass Refactorer", new GUIStyle(EditorStyles.boldLabel) { fontSize = 16, alignment = TextAnchor.MiddleCenter });
-            GUILayout.Label("Safely refactor assets, code identifiers, namespaces, and inject signatures.", EditorStyles.miniLabel);
+            GUILayout.Space(12);
+            GUILayout.BeginVertical("box");
+            GUILayout.Space(5);
+            var titleStyle = new GUIStyle(EditorStyles.boldLabel) {
+                fontSize = 18,
+                alignment = TextAnchor.MiddleCenter
+            };
+            titleStyle.normal.textColor = new Color(0.2f, 0.6f, 0.9f);
+            
+            var subtitleStyle = new GUIStyle(EditorStyles.miniLabel) {
+                alignment = TextAnchor.MiddleCenter,
+                wordWrap = true
+            };
+            
+            GUILayout.Label("PROJECT REFACTORER & OBFUSCATOR", titleStyle);
+            GUILayout.Label("Safely prefix/suffix target directories, scripts, and assets with automated reference integrity and junk code signatures.", subtitleStyle);
+            GUILayout.Space(5);
+            GUILayout.EndVertical();
             GUILayout.Space(10);
 
             scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
 
-            // --- Section 1: Dry Run Settings ---
-            DrawSectionHeader("1. Execution Settings");
-            isDryRun = EditorGUILayout.Toggle(new GUIContent("Dry Run Mode", "If enabled, changes are calculated and displayed below, but NOT written to disk until you click Apply."), isDryRun);
+            // History warning
+            string historyPath = Path.Combine(Application.dataPath, "../Library/refactorer_history.json");
+            bool hasHistory = File.Exists(historyPath);
+            if (hasHistory)
+            {
+                GUILayout.BeginVertical("box");
+                GUILayout.Space(5);
+                GUI.contentColor = new Color(1.0f, 0.7f, 0.1f);
+                GUILayout.Label("⚠️ Refactoring History Found!", EditorStyles.boldLabel);
+                GUI.contentColor = Color.white;
+                GUILayout.Label("You can revert the project to its original state using the button at the bottom. Note: Running a new refactor will overwrite this history.", EditorStyles.wordWrappedLabel);
+                GUILayout.Space(5);
+                GUILayout.EndVertical();
+                GUILayout.Space(10);
+            }
+
+            // --- Section 1: Target Folder & Renaming Settings ---
+            DrawSectionHeader("1. Target Folder & Renaming Settings");
+            
+            GUILayout.BeginVertical("box");
+            GUILayout.Space(5);
+            targetFolder = (DefaultAsset)EditorGUILayout.ObjectField("Target Folder:", targetFolder, typeof(DefaultAsset), false);
+            GUILayout.Space(5);
+            
+            if (targetFolder == null)
+            {
+                var warnStyle = new GUIStyle(EditorStyles.wordWrappedLabel);
+                warnStyle.normal.textColor = new Color(0.9f, 0.4f, 0.4f);
+                GUILayout.Label("❌ No Target Folder Selected\nDrag and drop a folder (e.g. Assets/MyFeature) from the Project window. The refactoring scope will be strictly restricted to this folder to protect third-party libraries.", warnStyle);
+            }
+            else
+            {
+                string path = AssetDatabase.GetAssetPath(targetFolder);
+                var infoStyle = new GUIStyle(EditorStyles.wordWrappedLabel);
+                infoStyle.normal.textColor = new Color(0.4f, 0.8f, 0.5f);
+                GUILayout.Label($"✅ Target Folder: {path}\nOnly folders, scripts, and assets inside this path will be renamed. C# class reference updates will scan the entire project to ensure compilation.", infoStyle);
+            }
+            GUILayout.Space(5);
+            GUILayout.EndVertical();
+            
+            GUILayout.Space(10);
+            
+            // Renaming Parameters
+            GUILayout.BeginVertical("box");
+            GUILayout.Space(5);
+            affixString = EditorGUILayout.TextField("String to Add (e.g. MySD):", affixString);
+            affixType = (AffixType)EditorGUILayout.EnumPopup("Add Position:", affixType);
+            
+            GUILayout.Space(8);
+            GUILayout.Label("What to Rename:", EditorStyles.miniBoldLabel);
+            renameScripts = DrawLeftToggle("Rename C# Scripts & Classes (uses '_')", renameScripts);
+            renameFolders = DrawLeftToggle("Rename Folders (uses '-')", renameFolders);
+            renameAssets = DrawLeftToggle("Rename Art, Music & Assets (uses '-')", renameAssets);
+            GUILayout.Space(5);
+            GUILayout.EndVertical();
+            
+            GUILayout.Space(8);
+            if (GUILayout.Button("Run Batch Refactor", GUILayout.Height(30)))
+            {
+                if (targetFolder == null)
+                {
+                    EditorUtility.DisplayDialog("Error", "Please select a target folder first.", "OK");
+                    return;
+                }
+                if (string.IsNullOrEmpty(affixString))
+                {
+                    EditorUtility.DisplayDialog("Error", "Please enter a string to add.", "OK");
+                    return;
+                }
+
+                string msg = isDryRun 
+                    ? "This will calculate a dry run of the batch rename. Proceed?" 
+                    : "WARNING: This will permanently rename scripts, classes, folders, and assets on disk inside the target folder. Proceed?";
+                
+                if (EditorUtility.DisplayDialog("Run Batch Refactor", msg, "Yes", "Cancel"))
+                {
+                    RunGlobalBatchRefactor(!isDryRun);
+                }
+            }
+            GUILayout.Space(15);
+
+            // --- Section 2: Smart Junk Code ---
+            DrawSectionHeader("2. Smart Junk Code & Obfuscation");
+            
+            GUILayout.BeginVertical("box");
+            GUILayout.Space(5);
+            GUILayout.Label("💡 Smart Obfuscation Details:", EditorStyles.miniBoldLabel);
+            GUILayout.Label("Injects randomized, performance-neutral code inside methods and uncalled private helper functions. This changes the binary signature of the build, which is useful for App Store checks. Restricts changes to scripts in the target folder.", EditorStyles.wordWrappedLabel);
+            GUILayout.Space(8);
+            optJunkInFunctions = DrawLeftToggle("Inject inside methods (Start/End of void functions)", optJunkInFunctions);
+            optJunkUncalledFunctions = DrawLeftToggle("Inject small uncalled methods inside classes", optJunkUncalledFunctions);
+            GUILayout.Space(5);
+            GUILayout.EndVertical();
+            
+            GUILayout.Space(8);
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("Inject Junk Code", GUILayout.Height(30)))
+            {
+                if (targetFolder == null)
+                {
+                    EditorUtility.DisplayDialog("Error", "Please select a target folder first.", "OK");
+                }
+                else
+                {
+                    string msg = isDryRun
+                        ? "This will calculate a dry run of junk code injection. Proceed?"
+                        : "This will inject junk code into scripts inside the target folder. Proceed?";
+                    if (EditorUtility.DisplayDialog("Inject Junk Code", msg, "Yes", "Cancel"))
+                    {
+                        InjectJunkCodeToAllScripts(!isDryRun);
+                    }
+                }
+            }
+            if (GUILayout.Button("Remove Junk Code", GUILayout.Height(30)))
+            {
+                if (targetFolder == null)
+                {
+                    EditorUtility.DisplayDialog("Error", "Please select a target folder first.", "OK");
+                }
+                else
+                {
+                    string msg = isDryRun
+                        ? "This will calculate a dry run of junk code removal. Proceed?"
+                        : "This will remove junk code from scripts inside the target folder. Proceed?";
+                    if (EditorUtility.DisplayDialog("Remove Junk Code", msg, "Yes", "Cancel"))
+                    {
+                        RemoveJunkCodeFromAllScripts(!isDryRun);
+                    }
+                }
+            }
+            GUILayout.EndHorizontal();
+            GUILayout.Space(15);
+
+            // --- Section 3: Execution & Dry Run Settings ---
+            DrawSectionHeader("3. Execution & Safety Settings");
+            
+            GUILayout.BeginVertical("box");
+            GUILayout.Space(5);
+            isDryRun = DrawLeftToggle("Dry Run Mode (Preview changes without writing to disk)", isDryRun);
+            GUILayout.Space(8);
             
             if (pendingChanges.Count > 0)
             {
-                EditorGUILayout.HelpBox($"{pendingChanges.Count} changes are currently planned and pending.", MessageType.Warning);
+                var pendStyle = new GUIStyle(EditorStyles.wordWrappedLabel);
+                pendStyle.normal.textColor = new Color(1.0f, 0.7f, 0.1f);
+                GUILayout.Label($"⚠️ Planned Changes Pending: {pendingChanges.Count} modifications calculated.\nSelect 'Execute Planned Changes' below to write these changes to disk.", pendStyle);
+                GUILayout.Space(8);
+                
                 GUILayout.BeginHorizontal();
                 if (GUILayout.Button("Execute Planned Changes", GUILayout.Height(30)))
                 {
@@ -107,123 +267,24 @@ namespace SoftwareDistrict.Framework.Refactoring
             }
             else
             {
-                EditorGUILayout.HelpBox("No pending changes. Select a tool below to run refactoring.", MessageType.Info);
+                GUILayout.Label("ℹ️ No pending changes.\nRun 'Batch Refactor' or 'Inject Junk Code' with Dry Run enabled to preview changes here.", EditorStyles.wordWrappedLabel);
             }
-            GUILayout.Space(15);
-
-            // --- Section 2: One-Click Batch Refactorer (Prefix/Suffix) ---
-            DrawSectionHeader("2. One-Click Batch Refactorer (Prefix/Postfix)");
-            EditorGUILayout.LabelField("Add prefix or postfix globally to all scripts/classes, folders, and assets.", EditorStyles.miniLabel);
-            globalScriptPrefix = EditorGUILayout.TextField("Script Prefix:", globalScriptPrefix);
-            globalScriptSuffix = EditorGUILayout.TextField("Script Suffix:", globalScriptSuffix);
-            globalFolderPrefix = EditorGUILayout.TextField("Folder Prefix:", globalFolderPrefix);
-            globalFolderSuffix = EditorGUILayout.TextField("Folder Suffix:", globalFolderSuffix);
-            globalRenameAssets = EditorGUILayout.Toggle(new GUIContent("Batch Rename Assets", "Include game assets (art, music, prefabs, materials, etc.) in renaming. (Uses GUID-safe renaming)"), globalRenameAssets);
-
             GUILayout.Space(5);
-            if (GUILayout.Button("Run Global Batch Refactor", GUILayout.Height(30)))
+            GUILayout.EndVertical();
+            
+            GUILayout.Space(8);
+            if (hasHistory)
             {
-                string msg = isDryRun ? "This will simulate a global rename on all selected elements. Proceed?" : "WARNING: This will rename script classes, files, directories, and assets. Proceed?";
-                if (EditorUtility.DisplayDialog("Global Batch Refactor", msg, "Yes", "Cancel"))
+                GUI.backgroundColor = new Color(0.8f, 0.4f, 0.4f);
+                if (GUILayout.Button("Revert Renames & Content", GUILayout.Height(30)))
                 {
-                    RunGlobalBatchRefactor();
+                    RevertProjectManual();
                 }
+                GUI.backgroundColor = Color.white;
             }
             GUILayout.Space(15);
 
-            // --- Section 3: Individual Refactors (Foldout) ---
-            showIndividualRefactors = EditorGUILayout.BeginFoldoutHeaderGroup(showIndividualRefactors, "3. Individual Refactor Tools");
-            if (showIndividualRefactors)
-            {
-                GUILayout.Space(5);
-                // Script Renaming
-                GUILayout.Label("Script & Class Renaming (With Cross-Script References)", EditorStyles.miniBoldLabel);
-                scriptSearchPrefix = EditorGUILayout.TextField("Search Prefix:", scriptSearchPrefix);
-                scriptReplacePrefix = EditorGUILayout.TextField("Replace Prefix:", scriptReplacePrefix);
-                scriptMatchExact = EditorGUILayout.Toggle("Match Prefix Exactly", scriptMatchExact);
-                if (GUILayout.Button("Refactor Scripts", GUILayout.Height(25)))
-                {
-                    ExecuteClassRefactor(scriptSearchPrefix, scriptReplacePrefix, scriptMatchExact);
-                }
-                GUILayout.Space(10);
-
-                // Namespace Renaming
-                GUILayout.Label("Namespace Renaming", EditorStyles.miniBoldLabel);
-                namespaceSearchName = EditorGUILayout.TextField("Old Namespace:", namespaceSearchName);
-                namespaceReplaceName = EditorGUILayout.TextField("New Namespace:", namespaceReplaceName);
-                if (GUILayout.Button("Refactor Namespaces", GUILayout.Height(25)))
-                {
-                    ExecuteNamespaceRefactor(namespaceSearchName, namespaceReplaceName);
-                }
-                GUILayout.Space(10);
-
-                // Function Renaming
-                GUILayout.Label("Function & Method Renaming (Updates Prefab/Scene Listeners)", EditorStyles.miniBoldLabel);
-                functionSearchName = EditorGUILayout.TextField("Old Function:", functionSearchName);
-                functionReplaceName = EditorGUILayout.TextField("New Function:", functionReplaceName);
-                functionRenameStrict = EditorGUILayout.Toggle("Strict Match", functionRenameStrict);
-                if (GUILayout.Button("Refactor Functions", GUILayout.Height(25)))
-                {
-                    ExecuteFunctionRefactor(functionSearchName, functionReplaceName, functionRenameStrict);
-                }
-                GUILayout.Space(10);
-
-                // Variable Renaming
-                GUILayout.Label("Variable Renaming (Includes [FormerlySerializedAs])", EditorStyles.miniBoldLabel);
-                identifierSearchName = EditorGUILayout.TextField("Old Variable:", identifierSearchName);
-                identifierReplaceName = EditorGUILayout.TextField("New Variable:", identifierReplaceName);
-                if (GUILayout.Button("Refactor Variables", GUILayout.Height(25)))
-                {
-                    ExecuteVariableRefactor(identifierSearchName, identifierReplaceName);
-                }
-                GUILayout.Space(10);
-
-                // Asset Renaming
-                GUILayout.Label("Asset & Folder Renaming", EditorStyles.miniBoldLabel);
-                assetSearchPrefix = EditorGUILayout.TextField("Asset Search Prefix:", assetSearchPrefix);
-                assetReplacePrefix = EditorGUILayout.TextField("Asset Replace Prefix:", assetReplacePrefix);
-                if (GUILayout.Button("Refactor Assets", GUILayout.Height(25)))
-                {
-                    ExecuteFolderRefactor(assetSearchPrefix, assetReplacePrefix);
-                }
-                GUILayout.Space(5);
-            }
-            EditorGUILayout.EndFoldoutHeaderGroup();
-            GUILayout.Space(15);
-
-            // --- Section 4: Obfuscation & Junk Code ---
-            showObfuscation = EditorGUILayout.BeginFoldoutHeaderGroup(showObfuscation, "4. Obfuscation & Junk Code Injection");
-            if (showObfuscation)
-            {
-                GUILayout.Label("Injection Options:", EditorStyles.miniBoldLabel);
-                optJunkInFunctions = EditorGUILayout.Toggle("Inject inside methods (Start/End)", optJunkInFunctions);
-                optJunkUncalledFunctions = EditorGUILayout.Toggle("Inject small uncalled methods", optJunkUncalledFunctions);
-                optJunkAppendToEnd = EditorGUILayout.Toggle("Append class to end of file", optJunkAppendToEnd);
-                optJunkInsideClassFields = EditorGUILayout.Toggle("Inject class body fields", optJunkInsideClassFields);
-                optJunkGenerateFiles = EditorGUILayout.Toggle("Generate separate junk scripts", optJunkGenerateFiles);
-
-                if (optJunkGenerateFiles)
-                {
-                    junkFileCount = EditorGUILayout.IntSlider("Files to Generate:", junkFileCount, 1, 100);
-                }
-
-                GUILayout.Space(5);
-                GUILayout.BeginHorizontal();
-                if (GUILayout.Button("Inject Junk Code", GUILayout.Height(25)))
-                {
-                    InjectJunkCodeToAllScripts();
-                }
-                if (GUILayout.Button("Remove Junk Code", GUILayout.Height(25)))
-                {
-                    RemoveJunkCodeFromAllScripts();
-                }
-                GUILayout.EndHorizontal();
-                GUILayout.Space(5);
-            }
-            EditorGUILayout.EndFoldoutHeaderGroup();
-            GUILayout.Space(15);
-
-            // --- Section 5: Dry Run Logs (Visible if changes are recorded) ---
+            // --- Section 4: Dry Run Logs ---
             if (isDryRun && pendingChanges.Count > 0)
             {
                 DrawSectionHeader("Planned Dry-Run Modifications");
@@ -248,36 +309,148 @@ namespace SoftwareDistrict.Framework.Refactoring
 
         private void DrawSectionHeader(string title)
         {
+            GUILayout.Space(10);
             GUILayout.Label(title, EditorStyles.boldLabel);
             Rect rect = GUILayoutUtility.GetRect(10, 2, GUILayout.ExpandWidth(true));
-            EditorGUI.DrawRect(rect, new Color(0.3f, 0.3f, 0.3f, 1f));
+            EditorGUI.DrawRect(rect, new Color(0.2f, 0.5f, 0.8f, 0.8f));
             GUILayout.Space(5);
         }
 
-        // --- Helper for Dry Run ---
+        private bool DrawLeftToggle(string label, bool value)
+        {
+            GUILayout.BeginHorizontal();
+            bool newValue = GUILayout.Toggle(value, "", GUILayout.Width(20));
+            GUILayout.Label(label, EditorStyles.wordWrappedLabel);
+            GUILayout.EndHorizontal();
+            return newValue;
+        }
+
+        // --- Cache Helpers ---
+        private string GetFileContent(string filePath)
+        {
+            if (fileContentCache.TryGetValue(filePath, out string content))
+            {
+                return content;
+            }
+            if (File.Exists(filePath))
+            {
+                content = File.ReadAllText(filePath);
+                fileContentCache[filePath] = content;
+                return content;
+            }
+            return null;
+        }
+
+        private void SetFileContent(string filePath, string newContent)
+        {
+            fileContentCache[filePath] = newContent;
+        }
+
+        private void FlushCacheToPendingChanges()
+        {
+            foreach (var kvp in fileContentCache)
+            {
+                string filePath = kvp.Key;
+                string newContent = kvp.Value;
+                if (File.Exists(filePath))
+                {
+                    string originalContent = File.ReadAllText(filePath);
+                    if (newContent != originalContent)
+                    {
+                        pendingChanges.Add(new PendingFileChange {
+                            filePath = filePath,
+                            changeDescription = "Refactored C# code structure / class references",
+                            newContent = newContent
+                        });
+                    }
+                }
+            }
+            fileContentCache.Clear();
+        }
+
+        // --- Naming Helpers ---
+        private string GetRenamedName(string originalName, bool isCSharp)
+        {
+            string connector = isCSharp ? "_" : "-";
+            if (affixType == AffixType.Prefix)
+            {
+                return affixString + connector + originalName;
+            }
+            else
+            {
+                return originalName + connector + affixString;
+            }
+        }
+
+        // --- Helper for Dry Run / Live Execution ---
         private void RecordOrApplyFileChange(string filePath, string description, string newContent)
         {
             if (isDryRun)
             {
                 pendingChanges.Add(new PendingFileChange { filePath = filePath, changeDescription = description, newContent = newContent });
-                Debug.Log($"[Dry Run Log] Planned edit in {Path.GetFileName(filePath)}: {description}");
             }
             else
             {
+                string relativePath = "Assets" + filePath.Substring(Application.dataPath.Length).Replace('\\', '/');
+                
+                // Record history (save original text) if not already done
+                if (File.Exists(filePath))
+                {
+                    bool alreadyRecorded = false;
+                    foreach (var tc in activeHistory.textChanges)
+                    {
+                        if (tc.filePath == relativePath)
+                        {
+                            alreadyRecorded = true;
+                            break;
+                        }
+                    }
+
+                    if (!alreadyRecorded)
+                    {
+                        string originalContent = File.ReadAllText(filePath);
+                        activeHistory.textChanges.Add(new TextChangeRecord {
+                            filePath = relativePath,
+                            oldText = originalContent,
+                            newText = newContent
+                        });
+                    }
+                }
+
                 File.WriteAllText(filePath, newContent);
             }
         }
 
         private bool RecordOrApplyRename(string assetPath, string description, string newName)
         {
+            string oldName = Path.GetFileName(assetPath);
+            bool isFolder = AssetDatabase.IsValidFolder(assetPath);
+            
+            // Calculate new path relative to Assets/
+            string parentDir = Path.GetDirectoryName(assetPath).Replace('\\', '/');
+            string newPath = parentDir + "/" + newName;
+            if (!isFolder)
+            {
+                string ext = Path.GetExtension(assetPath);
+                newPath += ext;
+            }
+
             if (isDryRun)
             {
                 pendingChanges.Add(new PendingFileChange { filePath = assetPath, changeDescription = description, renameNewName = newName });
-                Debug.Log($"[Dry Run Log] Planned rename: '{Path.GetFileName(assetPath)}' -> '{newName}': {description}");
                 return true;
             }
             else
             {
+                // Record history
+                activeHistory.renames.Add(new RenameRecord {
+                    oldPath = assetPath,
+                    newPath = newPath,
+                    oldName = Path.GetFileNameWithoutExtension(assetPath),
+                    newName = newName,
+                    isFolder = isFolder
+                });
+
                 string error = AssetDatabase.RenameAsset(assetPath, newName);
                 if (string.IsNullOrEmpty(error))
                 {
@@ -295,28 +468,44 @@ namespace SoftwareDistrict.Framework.Refactoring
         {
             if (pendingChanges.Count == 0) return;
 
+            activeHistory = new RefactorHistory();
+
             AssetDatabase.StartAssetEditing();
             try
             {
-                // Write all text replacements first to avoid path invalidation during renames
-                foreach (var change in pendingChanges)
+                // Temporarily disable Dry Run to allow RecordOrApply to write history
+                isDryRun = false;
+
+                // 1. Write text changes first
+                for (int i = 0; i < pendingChanges.Count; i++)
                 {
+                    var change = pendingChanges[i];
+                    EditorUtility.DisplayProgressBar("Applying Changes", $"Writing file edits... ({i + 1}/{pendingChanges.Count})", (float)i / pendingChanges.Count);
                     if (change.newContent != null && File.Exists(change.filePath))
                     {
-                        File.WriteAllText(change.filePath, change.newContent);
+                        RecordOrApplyFileChange(change.filePath, change.changeDescription, change.newContent);
                     }
                 }
 
-                // Perform file/asset renaming
-                foreach (var change in pendingChanges)
+                // 2. Rename files (scripts and assets) second
+                for (int i = 0; i < pendingChanges.Count; i++)
                 {
-                    if (change.renameNewName != null)
+                    var change = pendingChanges[i];
+                    EditorUtility.DisplayProgressBar("Applying Changes", $"Renaming assets... ({i + 1}/{pendingChanges.Count})", (float)i / pendingChanges.Count);
+                    if (change.renameNewName != null && !AssetDatabase.IsValidFolder(change.filePath) && File.Exists(change.filePath))
                     {
-                        string error = AssetDatabase.RenameAsset(change.filePath, change.renameNewName);
-                        if (!string.IsNullOrEmpty(error))
-                        {
-                            Debug.LogError($"Error applying rename of '{change.filePath}' to '{change.renameNewName}': {error}");
-                        }
+                        RecordOrApplyRename(change.filePath, change.changeDescription, change.renameNewName);
+                    }
+                }
+
+                // 3. Rename folders last
+                for (int i = 0; i < pendingChanges.Count; i++)
+                {
+                    var change = pendingChanges[i];
+                    EditorUtility.DisplayProgressBar("Applying Changes", $"Renaming folders... ({i + 1}/{pendingChanges.Count})", (float)i / pendingChanges.Count);
+                    if (change.renameNewName != null && AssetDatabase.IsValidFolder(change.filePath) && Directory.Exists(Path.GetFullPath(change.filePath)))
+                    {
+                        RecordOrApplyRename(change.filePath, change.changeDescription, change.renameNewName);
                     }
                 }
             }
@@ -326,7 +515,21 @@ namespace SoftwareDistrict.Framework.Refactoring
             }
             finally
             {
+                isDryRun = true; // Restore Dry Run state
+                EditorUtility.ClearProgressBar();
                 AssetDatabase.StopAssetEditing();
+            }
+
+            // Save history JSON
+            string historyPath = Path.Combine(Application.dataPath, "../Library/refactorer_history.json");
+            try
+            {
+                string json = JsonUtility.ToJson(activeHistory, true);
+                File.WriteAllText(historyPath, json);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"Failed to save refactoring history: {ex.Message}");
             }
 
             pendingChanges.Clear();
@@ -336,16 +539,11 @@ namespace SoftwareDistrict.Framework.Refactoring
 
         // --- Core Refactoring Implementations ---
 
-        private void ExecuteClassRefactor(string search, string replace, bool exact)
+        private void ExecuteClassRefactor(string search, string replace, bool exact, string targetFolderPath)
         {
-            if (string.IsNullOrEmpty(search) || string.IsNullOrEmpty(replace))
-            {
-                Debug.LogError("Class search/replace parameters cannot be empty.");
-                return;
-            }
+            if (string.IsNullOrEmpty(search) || string.IsNullOrEmpty(replace)) return;
 
             string[] scriptGUIDs = AssetDatabase.FindAssets("t:MonoScript");
-            int changedCount = 0;
 
             AssetDatabase.StartAssetEditing();
             try
@@ -355,7 +553,11 @@ namespace SoftwareDistrict.Framework.Refactoring
                 foreach (string guid in scriptGUIDs)
                 {
                     string assetPath = AssetDatabase.GUIDToAssetPath(guid);
-                    if (assetPath.StartsWith("Packages/") || assetPath.Contains("/Editor/") || assetPath.Contains("/Plugins/")) 
+                    if (assetPath.StartsWith("Packages/")) 
+                        continue;
+
+                    // SCOPE CHECK: Only rename if script is inside targetFolderPath
+                    if (!assetPath.StartsWith(targetFolderPath + "/"))
                         continue;
 
                     string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(assetPath);
@@ -375,36 +577,41 @@ namespace SoftwareDistrict.Framework.Refactoring
 
                 if (renames.Count == 0) return;
 
-                // Gather all C# scripts
+                // Gather all user scripts across the whole project (excluding Packages) to update references globally
                 var allUserScripts = new List<string>();
                 foreach (string guid in scriptGUIDs)
                 {
                     string assetPath = AssetDatabase.GUIDToAssetPath(guid);
-                    if (assetPath.StartsWith("Packages/") || assetPath.Contains("/Editor/") || assetPath.Contains("/Plugins/")) 
+                    if (assetPath.StartsWith("Packages/")) 
                         continue;
                     allUserScripts.Add(Path.GetFullPath(assetPath));
                 }
 
-                // Apply text updates globally in scripts
-                foreach (var rename in renames)
+                for (int i = 0; i < renames.Count; i++)
                 {
+                    var rename = renames[i];
+                    EditorUtility.DisplayProgressBar("Class Refactoring", $"Updating references for '{rename.oldName}' -> '{rename.newName}' ({i + 1}/{renames.Count})", (float)i / renames.Count);
+
                     string oldClassRegex = @"\b" + Regex.Escape(rename.oldName) + @"\b";
 
                     foreach (string scriptPath in allUserScripts)
                     {
-                        if (!File.Exists(scriptPath)) continue;
-
-                        string fileContent = File.ReadAllText(scriptPath);
-                        if (Regex.IsMatch(fileContent, oldClassRegex))
+                        string fileContent = GetFileContent(scriptPath);
+                        if (fileContent != null && Regex.IsMatch(fileContent, oldClassRegex))
                         {
                             fileContent = Regex.Replace(fileContent, oldClassRegex, rename.newName);
-                            RecordOrApplyFileChange(scriptPath, $"Rename class references from '{rename.oldName}' to '{rename.newName}'", fileContent);
+                            SetFileContent(scriptPath, fileContent);
                         }
                     }
 
-                    if (RecordOrApplyRename(rename.oldPath, $"Rename script file '{rename.oldName}' to '{rename.newName}'", rename.newName))
+                    if (File.Exists(Path.GetFullPath(rename.oldPath)))
                     {
-                        changedCount++;
+                        // Add rename pending change
+                        pendingChanges.Add(new PendingFileChange {
+                            filePath = rename.oldPath,
+                            changeDescription = $"Rename C# script from '{rename.oldName}' to '{rename.newName}'",
+                            renameNewName = rename.newName
+                        });
                     }
                 }
             }
@@ -414,304 +621,86 @@ namespace SoftwareDistrict.Framework.Refactoring
             }
             finally
             {
+                EditorUtility.ClearProgressBar();
                 AssetDatabase.StopAssetEditing();
-            }
-
-            AssetDatabase.Refresh();
-        }
-
-        private void ExecuteNamespaceRefactor(string search, string replace)
-        {
-            if (string.IsNullOrEmpty(search) || string.IsNullOrEmpty(replace)) return;
-
-            string[] scriptGUIDs = AssetDatabase.FindAssets("t:MonoScript");
-            int filesChangedCount = 0;
-
-            AssetDatabase.StartAssetEditing();
-            try
-            {
-                string pattern = @"\b" + Regex.Escape(search) + @"\b";
-                Regex regex = new Regex(pattern);
-
-                foreach (string guid in scriptGUIDs)
-                {
-                    string assetPath = AssetDatabase.GUIDToAssetPath(guid);
-                    if (assetPath.StartsWith("Packages/") || assetPath.Contains("/Editor/") || assetPath.Contains("/Plugins/")) 
-                        continue;
-
-                    string fullPath = Path.GetFullPath(assetPath);
-                    string fileContent = File.ReadAllText(fullPath);
-
-                    if (regex.IsMatch(fileContent))
-                    {
-                        fileContent = regex.Replace(fileContent, replace);
-                        RecordOrApplyFileChange(fullPath, $"Refactor namespace '{search}' to '{replace}'", fileContent);
-                        filesChangedCount++;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"Exception during namespace refactor: {ex.Message}");
-            }
-            finally
-            {
-                AssetDatabase.StopAssetEditing();
-            }
-
-            AssetDatabase.Refresh();
-        }
-
-        private void ExecuteFunctionRefactor(string search, string replace, bool strict)
-        {
-            if (string.IsNullOrEmpty(search) || string.IsNullOrEmpty(replace)) return;
-
-            string[] scriptGUIDs = AssetDatabase.FindAssets("t:MonoScript");
-            int filesChangedCount = 0;
-
-            AssetDatabase.StartAssetEditing();
-            try
-            {
-                string pattern = strict 
-                    ? @"\b" + Regex.Escape(search) + @"\b(?=\s*[\(<])" 
-                    : @"\b" + Regex.Escape(search) + @"\b";
-
-                Regex regex = new Regex(pattern);
-
-                foreach (string guid in scriptGUIDs)
-                {
-                    string assetPath = AssetDatabase.GUIDToAssetPath(guid);
-                    if (assetPath.StartsWith("Packages/") || assetPath.Contains("/Editor/") || assetPath.Contains("/Plugins/")) 
-                        continue;
-
-                    string fullPath = Path.GetFullPath(assetPath);
-                    string fileContent = File.ReadAllText(fullPath);
-
-                    if (regex.IsMatch(fileContent))
-                    {
-                        fileContent = regex.Replace(fileContent, replace);
-                        RecordOrApplyFileChange(fullPath, $"Refactor function '{search}' to '{replace}'", fileContent);
-                        filesChangedCount++;
-                    }
-                }
-
-                // Also update method name bindings in scenes and prefabs
-                UpdateYAMLEvents(search, replace);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"Exception during function refactor: {ex.Message}");
-            }
-            finally
-            {
-                AssetDatabase.StopAssetEditing();
-            }
-
-            AssetDatabase.Refresh();
-        }
-
-        private void ExecuteVariableRefactor(string search, string replace)
-        {
-            if (string.IsNullOrEmpty(search) || string.IsNullOrEmpty(replace)) return;
-
-            string[] scriptGUIDs = AssetDatabase.FindAssets("t:MonoScript");
-            int filesChangedCount = 0;
-
-            AssetDatabase.StartAssetEditing();
-            try
-            {
-                string refPattern = @"\b" + Regex.Escape(search) + @"\b";
-                Regex refRegex = new Regex(refPattern);
-
-                foreach (string guid in scriptGUIDs)
-                {
-                    string assetPath = AssetDatabase.GUIDToAssetPath(guid);
-                    if (assetPath.StartsWith("Packages/") || assetPath.Contains("/Editor/") || assetPath.Contains("/Plugins/")) 
-                        continue;
-
-                    string fullPath = Path.GetFullPath(assetPath);
-                    string fileContent = File.ReadAllText(fullPath);
-                    bool isModified = false;
-
-                    // 1. Inject [FormerlySerializedAs] on declaration line
-                    string declarationPattern = @"(?<attributes>(?:\[[^\]]+\]\s*)*)(?<modifiers>\b(?:public|private|protected|internal|serialized)\s+)+(?<type>[a-zA-Z0-9_<>\[\]]+)\s+\b" + Regex.Escape(search) + @"\b\s*(?<initializer>=[^;]+)?\s*;";
-                    
-                    if (Regex.IsMatch(fileContent, declarationPattern))
-                    {
-                        fileContent = Regex.Replace(fileContent, declarationPattern, m =>
-                        {
-                            string attrs = m.Groups["attributes"].Value;
-                            if (attrs.Contains("FormerlySerializedAs"))
-                            {
-                                return m.Value.Replace(search, replace);
-                            }
-                            
-                            string newAttr = $"[UnityEngine.Serialization.FormerlySerializedAs(\"{search}\")] ";
-                            return newAttr + m.Value.Replace(search, replace);
-                        });
-                        isModified = true;
-                    }
-
-                    // 2. Replace all remaining variable references globally in script
-                    if (refRegex.IsMatch(fileContent))
-                    {
-                        fileContent = refRegex.Replace(fileContent, replace);
-                        isModified = true;
-                    }
-
-                    if (isModified)
-                    {
-                        RecordOrApplyFileChange(fullPath, $"Rename variable '{search}' to '{replace}' (added FormerlySerializedAs)", fileContent);
-                        filesChangedCount++;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"Exception during variable refactor: {ex.Message}");
-            }
-            finally
-            {
-                AssetDatabase.StopAssetEditing();
-            }
-
-            AssetDatabase.Refresh();
-        }
-
-        private void ExecuteFolderRefactor(string search, string replace)
-        {
-            if (string.IsNullOrEmpty(search) || string.IsNullOrEmpty(replace)) return;
-
-            string[] directories = Directory.GetDirectories(Application.dataPath, "*", SearchOption.AllDirectories);
-            var sortedDirs = new List<string>(directories);
-            sortedDirs.Sort((a, b) => b.Length.CompareTo(a.Length));
-
-            int renamedCount = 0;
-
-            AssetDatabase.StartAssetEditing();
-            try
-            {
-                foreach (string dirPath in sortedDirs)
-                {
-                    string dirName = Path.GetFileName(dirPath);
-                    if (dirName.Equals(search))
-                    {
-                        string relativePath = "Assets" + dirPath.Substring(Application.dataPath.Length).Replace('\\', '/');
-
-                        if (relativePath.Contains("/Editor") || relativePath.Contains("/Plugins") || relativePath.Contains("/TextMesh Pro") || relativePath.Contains("/Packages"))
-                            continue;
-
-                        if (RecordOrApplyRename(relativePath, $"Rename folder '{dirName}' to '{replace}'", replace))
-                        {
-                            renamedCount++;
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"Exception during folder refactor: {ex.Message}");
-            }
-            finally
-            {
-                AssetDatabase.StopAssetEditing();
-            }
-
-            AssetDatabase.Refresh();
-        }
-
-        private void UpdateYAMLEvents(string oldFuncName, string newFuncName)
-        {
-            string[] yamlFiles = Directory.GetFiles(Application.dataPath, "*", SearchOption.AllDirectories);
-            foreach (string file in yamlFiles)
-            {
-                string ext = Path.GetExtension(file).ToLower();
-                if (ext == ".unity" || ext == ".prefab")
-                {
-                    string content = File.ReadAllText(file);
-                    string pattern = @"\bm_MethodName:\s*" + Regex.Escape(oldFuncName) + @"\b";
-                    if (Regex.IsMatch(content, pattern))
-                    {
-                        string newContent = Regex.Replace(content, pattern, "m_MethodName: " + newFuncName);
-                        RecordOrApplyFileChange(file, $"Update YAML event binding from '{oldFuncName}' to '{newFuncName}'", newContent);
-                    }
-                }
             }
         }
 
         // --- One-Click Batch Refactorer ---
-        private void RunGlobalBatchRefactor()
+        private void RunGlobalBatchRefactor(bool runLive)
         {
-            // 1. Prefix scripts and classes
-            if (!string.IsNullOrEmpty(globalScriptPrefix) || !string.IsNullOrEmpty(globalScriptSuffix))
+            pendingChanges.Clear();
+            fileContentCache.Clear();
+
+            string targetFolderPath = "";
+            if (targetFolder != null)
+            {
+                targetFolderPath = AssetDatabase.GetAssetPath(targetFolder);
+                if (!AssetDatabase.IsValidFolder(targetFolderPath))
+                {
+                    targetFolderPath = "";
+                }
+            }
+
+            if (string.IsNullOrEmpty(targetFolderPath))
+            {
+                EditorUtility.DisplayDialog("Error", "Please select a valid target folder.", "OK");
+                return;
+            }
+
+            // 1. Prefix/Suffix scripts and classes (using Underscore '_')
+            if (renameScripts)
             {
                 string[] scriptGUIDs = AssetDatabase.FindAssets("t:MonoScript");
                 AssetDatabase.StartAssetEditing();
                 try
                 {
-                    foreach (string guid in scriptGUIDs)
+                    for (int i = 0; i < scriptGUIDs.Length; i++)
                     {
-                        string assetPath = AssetDatabase.GUIDToAssetPath(guid);
-                        if (assetPath.StartsWith("Packages/") || assetPath.Contains("/Editor/") || assetPath.Contains("/Plugins/")) 
+                        string assetPath = AssetDatabase.GUIDToAssetPath(scriptGUIDs[i]);
+                        string fileName = Path.GetFileNameWithoutExtension(assetPath);
+                        EditorUtility.DisplayProgressBar("Batch Script Renaming", $"Preparing '{fileName}' ({i + 1}/{scriptGUIDs.Length})", (float)i / scriptGUIDs.Length);
+
+                        if (assetPath.StartsWith("Packages/")) 
                             continue;
 
-                        string fileName = Path.GetFileNameWithoutExtension(assetPath);
-                        string newName = globalScriptPrefix + fileName + globalScriptSuffix;
+                        // SCOPE CHECK: Only rename if script is inside targetFolderPath
+                        if (!assetPath.StartsWith(targetFolderPath + "/"))
+                            continue;
+
+                        string newName = GetRenamedName(fileName, true);
 
                         if (newName != fileName)
                         {
-                            ExecuteClassRefactor(fileName, newName, true);
+                            ExecuteClassRefactor(fileName, newName, true, targetFolderPath);
                         }
                     }
                 }
                 finally
                 {
+                    EditorUtility.ClearProgressBar();
                     AssetDatabase.StopAssetEditing();
                 }
             }
 
-            // 2. Prefix folders (using bottom-up path ordering)
-            if (!string.IsNullOrEmpty(globalFolderPrefix) || !string.IsNullOrEmpty(globalFolderSuffix))
-            {
-                string[] directories = Directory.GetDirectories(Application.dataPath, "*", SearchOption.AllDirectories);
-                var sortedDirs = new List<string>(directories);
-                sortedDirs.Sort((a, b) => b.Length.CompareTo(a.Length));
-
-                AssetDatabase.StartAssetEditing();
-                try
-                {
-                    foreach (string dirPath in sortedDirs)
-                    {
-                        string dirName = Path.GetFileName(dirPath);
-                        string relativePath = "Assets" + dirPath.Substring(Application.dataPath.Length).Replace('\\', '/');
-
-                        if (relativePath.Contains("/Editor") || relativePath.Contains("/Plugins") || relativePath.Contains("/TextMesh Pro") || relativePath.Contains("/Packages") || relativePath.Contains("/JunkCode"))
-                            continue;
-
-                        string newDirName = globalFolderPrefix + dirName + globalFolderSuffix;
-                        if (newDirName != dirName)
-                        {
-                            RecordOrApplyRename(relativePath, $"Batch prefix folder '{dirName}' to '{newDirName}'", newDirName);
-                        }
-                    }
-                }
-                finally
-                {
-                    AssetDatabase.StopAssetEditing();
-                }
-            }
-
-            // 3. Prefix Assets (art, music, prefabs, materials, models, animations)
-            if (globalRenameAssets && (!string.IsNullOrEmpty(globalScriptPrefix) || !string.IsNullOrEmpty(globalScriptSuffix)))
+            // 2. Prefix/Suffix Assets next (art, music, prefabs, materials, models, animations using Hyphen '-')
+            if (renameAssets)
             {
                 string[] allAssetGUIDs = AssetDatabase.FindAssets("");
                 AssetDatabase.StartAssetEditing();
                 try
                 {
-                    foreach (string guid in allAssetGUIDs)
+                    for (int i = 0; i < allAssetGUIDs.Length; i++)
                     {
-                        string assetPath = AssetDatabase.GUIDToAssetPath(guid);
-                        if (assetPath.StartsWith("Packages/") || assetPath.StartsWith("ProjectSettings/") || assetPath.StartsWith("UserSettings/")) 
+                        string assetPath = AssetDatabase.GUIDToAssetPath(allAssetGUIDs[i]);
+                        string fileName = Path.GetFileNameWithoutExtension(assetPath);
+                        EditorUtility.DisplayProgressBar("Batch Asset Renaming", $"Renaming '{fileName}' ({i + 1}/{allAssetGUIDs.Length})", (float)i / allAssetGUIDs.Length);
+
+                        if (assetPath.StartsWith("Packages/")) 
+                            continue;
+
+                        // SCOPE CHECK: Only rename if asset is inside targetFolderPath
+                        if (!assetPath.StartsWith(targetFolderPath + "/"))
                             continue;
 
                         string ext = Path.GetExtension(assetPath).ToLower();
@@ -722,45 +711,274 @@ namespace SoftwareDistrict.Framework.Refactoring
 
                         if (isAssetToRename)
                         {
-                            string fileName = Path.GetFileNameWithoutExtension(assetPath);
-                            string newName = globalScriptPrefix + fileName + globalScriptSuffix;
-
-                            if (newName != fileName)
+                            if (File.Exists(Path.GetFullPath(assetPath)))
                             {
-                                RecordOrApplyRename(assetPath, $"Batch prefix asset file '{fileName}' to '{newName}'", newName);
+                                string newName = GetRenamedName(fileName, false);
+
+                                if (newName != fileName)
+                                {
+                                    pendingChanges.Add(new PendingFileChange {
+                                        filePath = assetPath,
+                                        changeDescription = $"Batch prefix asset file '{fileName}' to '{newName}'",
+                                        renameNewName = newName
+                                    });
+                                }
                             }
                         }
                     }
                 }
                 finally
                 {
+                    EditorUtility.ClearProgressBar();
                     AssetDatabase.StopAssetEditing();
                 }
             }
 
-            AssetDatabase.Refresh();
-            Debug.Log("Global Batch Refactor calculated successfully.");
+            // 3. Prefix/Suffix folders last (using bottom-up path ordering and Hyphen '-')
+            if (renameFolders)
+            {
+                string fullTargetFolderPath = Path.GetFullPath(targetFolderPath);
+                if (Directory.Exists(fullTargetFolderPath))
+                {
+                    string[] directories = Directory.GetDirectories(fullTargetFolderPath, "*", SearchOption.AllDirectories);
+                    var sortedDirs = new List<string>(directories);
+                    sortedDirs.Sort((a, b) => b.Length.CompareTo(a.Length));
+
+                    AssetDatabase.StartAssetEditing();
+                    try
+                    {
+                        for (int i = 0; i < sortedDirs.Count; i++)
+                        {
+                            string dirPath = sortedDirs[i];
+                            string dirName = Path.GetFileName(dirPath);
+                            EditorUtility.DisplayProgressBar("Batch Folder Renaming", $"Renaming '{dirName}' ({i + 1}/{sortedDirs.Count})", (float)i / sortedDirs.Count);
+
+                            string relativePath = "Assets" + dirPath.Substring(Application.dataPath.Length).Replace('\\', '/');
+
+                            // Safeguard standard folders and specific third-party structures
+                            string lowerDirName = dirName.ToLower();
+                            if (lowerDirName == "editor" || 
+                                lowerDirName == "plugins" || 
+                                lowerDirName == "runtime" || 
+                                lowerDirName == "resources" || 
+                                lowerDirName == "streamingassets" || 
+                                lowerDirName == "webgltemplates" ||
+                                lowerDirName == "textmesh pro" ||
+                                lowerDirName == "textmeshpro" ||
+                                lowerDirName == "googlemobileads" ||
+                                lowerDirName == "spine" ||
+                                lowerDirName == "spine-unity" ||
+                                lowerDirName == "cgincludes" ||
+                                lowerDirName == "junkcode")
+                            {
+                                continue;
+                            }
+
+                            if (relativePath.Contains("/Editor/") || relativePath.EndsWith("/Editor") ||
+                                relativePath.Contains("/Plugins/") || relativePath.EndsWith("/Plugins") ||
+                                relativePath.Contains("/TextMesh Pro/") || relativePath.EndsWith("/TextMesh Pro") ||
+                                relativePath.Contains("/Packages/") || relativePath.EndsWith("/Packages") ||
+                                relativePath.Contains("/JunkCode/") || relativePath.EndsWith("/JunkCode"))
+                            {
+                                continue;
+                            }
+
+                            if (Directory.Exists(dirPath))
+                            {
+                                string newDirName = GetRenamedName(dirName, false);
+                                if (newDirName != dirName)
+                                {
+                                    pendingChanges.Add(new PendingFileChange {
+                                        filePath = relativePath,
+                                        changeDescription = $"Batch prefix folder '{dirName}' to '{newDirName}'",
+                                        renameNewName = newDirName
+                                    });
+                                }
+                            }
+                        }
+                    }
+                    finally
+                    {
+                        EditorUtility.ClearProgressBar();
+                        AssetDatabase.StopAssetEditing();
+                    }
+                }
+            }
+
+            // Flush in-memory script cache to pendingChanges
+            FlushCacheToPendingChanges();
+
+            if (runLive)
+            {
+                ApplyPendingDryRunChanges();
+            }
+            else
+            {
+                Debug.Log($"Dry run refactor calculation completed. {pendingChanges.Count} changes planned.");
+            }
+        }
+
+        // --- C# Manual Revert ---
+        private void RevertProjectManual()
+        {
+            string historyPath = Path.Combine(Application.dataPath, "../Library/refactorer_history.json");
+            if (!File.Exists(historyPath))
+            {
+                EditorUtility.DisplayDialog("Revert Changes", "No refactoring history found. Cannot revert automatically.", "OK");
+                return;
+            }
+
+            if (EditorUtility.DisplayDialog("Revert All Changes", "This will restore your scripts, folders, and assets to their original names and contents before the last refactor. Proceed?", "Yes", "Cancel"))
+            {
+                string json = File.ReadAllText(historyPath);
+                RefactorHistory history = JsonUtility.FromJson<RefactorHistory>(json);
+
+                if (history == null)
+                {
+                    EditorUtility.DisplayDialog("Error", "History file is corrupted.", "OK");
+                    return;
+                }
+
+                AssetDatabase.StartAssetEditing();
+                try
+                {
+                    int totalSteps = history.textChanges.Count + history.renames.Count;
+                    int step = 0;
+
+                    // 1. Restore original text contents
+                    for (int i = 0; i < history.textChanges.Count; i++)
+                    {
+                        var change = history.textChanges[i];
+                        step++;
+                        EditorUtility.DisplayProgressBar("Reverting Changes", $"Restoring file contents ({step}/{totalSteps})", (float)step / totalSteps);
+
+                        string currentPath = GetCurrentDiskPath(change.filePath, history.renames, -1);
+                        string fullPath = Path.GetFullPath(currentPath);
+
+                        if (File.Exists(fullPath))
+                        {
+                            File.WriteAllText(fullPath, change.oldText);
+                        }
+                    }
+
+                    // 2. Rename files back (reverse order of renames)
+                    for (int i = history.renames.Count - 1; i >= 0; i--)
+                    {
+                        var rename = history.renames[i];
+                        step++;
+                        EditorUtility.DisplayProgressBar("Reverting Changes", $"Restoring names ({step}/{totalSteps})", (float)step / totalSteps);
+
+                        if (!rename.isFolder)
+                        {
+                            string currentAssetPath = GetCurrentDiskPath(rename.oldPath, history.renames, i);
+                            string fullPath = Path.GetFullPath(currentAssetPath);
+                            if (File.Exists(fullPath))
+                            {
+                                string error = AssetDatabase.RenameAsset(currentAssetPath, rename.oldName);
+                                if (!string.IsNullOrEmpty(error))
+                                {
+                                    Debug.LogError($"Error reverting file rename: {error}");
+                                }
+                            }
+                        }
+                    }
+
+                    // 3. Rename folders back (reverse order of renames)
+                    for (int i = history.renames.Count - 1; i >= 0; i--)
+                    {
+                        var rename = history.renames[i];
+                        if (rename.isFolder)
+                        {
+                            string currentAssetPath = GetCurrentDiskPath(rename.oldPath, history.renames, i);
+                            string fullPath = Path.GetFullPath(currentAssetPath);
+                            if (Directory.Exists(fullPath))
+                            {
+                                string error = AssetDatabase.RenameAsset(currentAssetPath, rename.oldName);
+                                if (!string.IsNullOrEmpty(error))
+                                {
+                                    Debug.LogError($"Error reverting folder rename: {error}");
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"Exception during manual revert: {ex.Message}");
+                }
+                finally
+                {
+                    EditorUtility.ClearProgressBar();
+                    AssetDatabase.StopAssetEditing();
+                }
+
+                try
+                {
+                    File.Delete(historyPath);
+                }
+                catch { }
+
+                AssetDatabase.Refresh();
+                Debug.Log("Project successfully reverted to its pre-refactored state.");
+            }
+        }
+
+        private string GetCurrentDiskPath(string path, List<RenameRecord> renames, int currentIndex)
+        {
+            string currentPath = path;
+            for (int j = currentIndex + 1; j < renames.Count; j++)
+            {
+                if (renames[j].isFolder && currentPath.StartsWith(renames[j].oldPath + "/"))
+                {
+                    currentPath = renames[j].newPath + currentPath.Substring(renames[j].oldPath.Length);
+                }
+                else if (!renames[j].isFolder && currentPath.Equals(renames[j].oldPath))
+                {
+                    currentPath = renames[j].newPath;
+                }
+            }
+            return currentPath;
         }
 
         // --- Obfuscation & Junk Code ---
 
-        private void InjectJunkCodeToAllScripts()
+        private void InjectJunkCodeToAllScripts(bool runLive)
         {
-            if (optJunkGenerateFiles)
+            pendingChanges.Clear();
+            fileContentCache.Clear();
+
+            string targetFolderPath = "";
+            if (targetFolder != null)
             {
-                GenerateJunkFiles();
+                targetFolderPath = AssetDatabase.GetAssetPath(targetFolder);
+                if (!AssetDatabase.IsValidFolder(targetFolderPath))
+                {
+                    targetFolderPath = "";
+                }
+            }
+
+            if (string.IsNullOrEmpty(targetFolderPath))
+            {
+                EditorUtility.DisplayDialog("Error", "Please select a valid target folder.", "OK");
+                return;
             }
 
             string[] scriptGUIDs = AssetDatabase.FindAssets("t:MonoScript");
-            int injectedCount = 0;
 
             AssetDatabase.StartAssetEditing();
             try
             {
-                foreach (string guid in scriptGUIDs)
+                for (int i = 0; i < scriptGUIDs.Length; i++)
                 {
-                    string assetPath = AssetDatabase.GUIDToAssetPath(guid);
-                    if (assetPath.StartsWith("Packages/") || assetPath.Contains("/Editor/") || assetPath.Contains("/Plugins/")) 
+                    string assetPath = AssetDatabase.GUIDToAssetPath(scriptGUIDs[i]);
+                    string fileName = Path.GetFileNameWithoutExtension(assetPath);
+                    EditorUtility.DisplayProgressBar("Junk Code Injection", $"Processing script '{fileName}' ({i + 1}/{scriptGUIDs.Length})", (float)i / scriptGUIDs.Length);
+
+                    if (assetPath.StartsWith("Packages/")) 
+                        continue;
+
+                    // SCOPE CHECK: Only target files in the target folder
+                    if (!assetPath.StartsWith(targetFolderPath + "/"))
                         continue;
 
                     string fullPath = Path.GetFullPath(assetPath);
@@ -768,47 +986,15 @@ namespace SoftwareDistrict.Framework.Refactoring
                     string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(assetPath);
                     bool isModified = false;
 
-                    // A. Append class to end of file
-                    if (optJunkAppendToEnd)
-                    {
-                        if (!fileContent.Contains(JunkStartMarker))
-                        {
-                            string junkCode = GenerateRandomJunkCodeBlock();
-                            StringBuilder sb = new StringBuilder(fileContent);
-                            sb.AppendLine();
-                            sb.AppendLine(JunkStartMarker);
-                            sb.Append(junkCode);
-                            sb.AppendLine(JunkEndMarker);
-                            fileContent = sb.ToString();
-                            isModified = true;
-                        }
-                    }
-
-                    // B. Inject fields inside class body
-                    if (optJunkInsideClassFields)
-                    {
-                        if (!fileContent.Contains(ClassJunkStartMarker))
-                        {
-                            int closingBraceIndex = FindClassClosingBraceIndex(fileContent, fileNameWithoutExtension);
-                            if (closingBraceIndex != -1)
-                            {
-                                string junkCode = GenerateRandomJunkMethods();
-                                string block = "\n" + ClassJunkStartMarker + "\n" + junkCode + ClassJunkEndMarker + "\n";
-                                fileContent = fileContent.Insert(closingBraceIndex, block);
-                                isModified = true;
-                            }
-                        }
-                    }
-
-                    // C. Inject inside existing functions (Start / End)
+                    // A. Inject inside existing functions (Start / End)
                     if (optJunkInFunctions)
                     {
                         if (!fileContent.Contains("// <RefactorerFuncStart_Junk>") && !fileContent.Contains("// <RefactorerFuncEnd_Junk>"))
                         {
                             var matches = Regex.Matches(fileContent, @"\b(void|int|float|string|bool)\s+([a-zA-Z0-9_]+)\s*\([^)]*\)\s*\{");
-                            for (int i = matches.Count - 1; i >= 0; i--)
+                            for (int mIndex = matches.Count - 1; mIndex >= 0; mIndex--)
                             {
-                                var match = matches[i];
+                                var match = matches[mIndex];
                                 string retType = match.Groups[1].Value;
                                 int openBraceIndex = match.Index + match.Length - 1;
 
@@ -837,7 +1023,7 @@ namespace SoftwareDistrict.Framework.Refactoring
                         }
                     }
 
-                    // D. Inject uncalled functions
+                    // B. Inject uncalled functions
                     if (optJunkUncalledFunctions)
                     {
                         if (!fileContent.Contains("// <RefactorerUncalledFunc_Junk>"))
@@ -855,8 +1041,7 @@ namespace SoftwareDistrict.Framework.Refactoring
 
                     if (isModified)
                     {
-                        RecordOrApplyFileChange(fullPath, "Inject requested junk code patterns", fileContent);
-                        injectedCount++;
+                        SetFileContent(fullPath, fileContent);
                     }
                 }
             }
@@ -866,26 +1051,49 @@ namespace SoftwareDistrict.Framework.Refactoring
             }
             finally
             {
+                EditorUtility.ClearProgressBar();
                 AssetDatabase.StopAssetEditing();
             }
 
-            AssetDatabase.Refresh();
+            // Flush cache
+            FlushCacheToPendingChanges();
+
+            if (runLive)
+            {
+                ApplyPendingDryRunChanges();
+            }
+            else
+            {
+                Debug.Log($"Dry run junk code injection completed. {pendingChanges.Count} files will be modified.");
+            }
         }
 
-        private void RemoveJunkCodeFromAllScripts()
+        private void RemoveJunkCodeFromAllScripts(bool runLive)
         {
+            pendingChanges.Clear();
+            fileContentCache.Clear();
+
+            string targetFolderPath = "";
+            if (targetFolder != null)
+            {
+                targetFolderPath = AssetDatabase.GetAssetPath(targetFolder);
+                if (!AssetDatabase.IsValidFolder(targetFolderPath))
+                {
+                    targetFolderPath = "";
+                }
+            }
+
+            if (string.IsNullOrEmpty(targetFolderPath))
+            {
+                EditorUtility.DisplayDialog("Error", "Please select a valid target folder.", "OK");
+                return;
+            }
+
             string[] scriptGUIDs = AssetDatabase.FindAssets("t:MonoScript");
-            int cleanedCount = 0;
 
             AssetDatabase.StartAssetEditing();
             try
             {
-                string appendPattern = @"\r?\n?" + Regex.Escape(JunkStartMarker) + @".*?" + Regex.Escape(JunkEndMarker) + @"\r?\n?";
-                Regex appendRegex = new Regex(appendPattern, RegexOptions.Singleline);
-
-                string classPattern = @"\r?\n?" + Regex.Escape(ClassJunkStartMarker) + @".*?" + Regex.Escape(ClassJunkEndMarker) + @"\r?\n?";
-                Regex classRegex = new Regex(classPattern, RegexOptions.Singleline);
-
                 string funcStartPattern = @"\r?\n?// <RefactorerFuncStart_Junk>.*?// </RefactorerFuncStart_Junk>\r?\n?";
                 Regex funcStartRegex = new Regex(funcStartPattern, RegexOptions.Singleline);
 
@@ -895,27 +1103,22 @@ namespace SoftwareDistrict.Framework.Refactoring
                 string uncalledPattern = @"\r?\n?// <RefactorerUncalledFunc_Junk>.*?// </RefactorerUncalledFunc_Junk>\r?\n?";
                 Regex uncalledRegex = new Regex(uncalledPattern, RegexOptions.Singleline);
 
-                foreach (string guid in scriptGUIDs)
+                for (int i = 0; i < scriptGUIDs.Length; i++)
                 {
-                    string assetPath = AssetDatabase.GUIDToAssetPath(guid);
-                    if (assetPath.StartsWith("Packages/") || assetPath.Contains("/Editor/") || assetPath.Contains("/Plugins/")) 
+                    string assetPath = AssetDatabase.GUIDToAssetPath(scriptGUIDs[i]);
+                    string fileName = Path.GetFileNameWithoutExtension(assetPath);
+                    EditorUtility.DisplayProgressBar("Junk Code Removal", $"Cleaning script '{fileName}' ({i + 1}/{scriptGUIDs.Length})", (float)i / scriptGUIDs.Length);
+
+                    if (assetPath.StartsWith("Packages/")) 
+                        continue;
+
+                    // SCOPE CHECK: Only target files in the target folder
+                    if (!assetPath.StartsWith(targetFolderPath + "/"))
                         continue;
 
                     string fullPath = Path.GetFullPath(assetPath);
                     string fileContent = File.ReadAllText(fullPath);
                     bool wasModified = false;
-
-                    if (fileContent.Contains(JunkStartMarker))
-                    {
-                        fileContent = appendRegex.Replace(fileContent, string.Empty);
-                        wasModified = true;
-                    }
-
-                    if (fileContent.Contains(ClassJunkStartMarker))
-                    {
-                        fileContent = classRegex.Replace(fileContent, string.Empty);
-                        wasModified = true;
-                    }
 
                     if (fileContent.Contains("// <RefactorerFuncStart_Junk>"))
                     {
@@ -937,8 +1140,7 @@ namespace SoftwareDistrict.Framework.Refactoring
 
                     if (wasModified)
                     {
-                        RecordOrApplyFileChange(fullPath, "Remove all junk code patterns", fileContent);
-                        cleanedCount++;
+                        SetFileContent(fullPath, fileContent);
                     }
                 }
             }
@@ -948,26 +1150,21 @@ namespace SoftwareDistrict.Framework.Refactoring
             }
             finally
             {
+                EditorUtility.ClearProgressBar();
                 AssetDatabase.StopAssetEditing();
             }
 
-            // Clean generated junk folder if it exists
-            string junkFolder = Path.Combine(Application.dataPath, "JunkCode");
-            if (Directory.Exists(junkFolder))
-            {
-                if (isDryRun)
-                {
-                    pendingChanges.Add(new PendingFileChange { filePath = junkFolder, changeDescription = "Delete Assets/JunkCode directory" });
-                }
-                else
-                {
-                    Directory.Delete(junkFolder, true);
-                    string metaFile = junkFolder + ".meta";
-                    if (File.Exists(metaFile)) File.Delete(metaFile);
-                }
-            }
+            // Flush cache
+            FlushCacheToPendingChanges();
 
-            AssetDatabase.Refresh();
+            if (runLive)
+            {
+                ApplyPendingDryRunChanges();
+            }
+            else
+            {
+                Debug.Log($"Dry run junk code removal completed. {pendingChanges.Count} files will be cleaned.");
+            }
         }
 
         private int FindClassClosingBraceIndex(string content, string className)
@@ -1006,187 +1203,6 @@ namespace SoftwareDistrict.Framework.Refactoring
                 }
             }
             return -1;
-        }
-
-        private string GenerateRandomJunkCodeBlock()
-        {
-            const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            string GetRandStr(int len)
-            {
-                StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < len; i++)
-                {
-                    builder.Append(chars[UnityEngine.Random.Range(0, chars.Length)]);
-                }
-                return builder.ToString();
-            }
-
-            string randomSuffix = GetRandStr(6);
-            string nsName = "RefactorJunkNS_" + randomSuffix;
-            string className = "JunkClass_" + randomSuffix;
-            string intFieldName = "value_" + GetRandStr(4);
-            string strFieldName = "string_" + GetRandStr(4);
-            string methodName = "PerformAction_" + GetRandStr(5);
-
-            int val = UnityEngine.Random.Range(100, 999);
-            int loopMax = UnityEngine.Random.Range(2, 6);
-
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine($"namespace {nsName}");
-            sb.AppendLine("{");
-            sb.AppendLine($"    public class {className}");
-            sb.AppendLine("    {");
-            sb.AppendLine($"        public int {intFieldName} = {val};");
-            sb.AppendLine($"        public string {strFieldName} = \"{randomSuffix}\";");
-            sb.AppendLine();
-            sb.AppendLine($"        public void {methodName}()");
-            sb.AppendLine("        {");
-            sb.AppendLine($"            int counter = {intFieldName};");
-            sb.AppendLine($"            for (int i = 0; i < {loopMax}; i++)");
-            sb.AppendLine("            {");
-            sb.AppendLine("                counter += i;");
-            sb.AppendLine("            }");
-            sb.AppendLine($"            if (counter > {val + 5})");
-            sb.AppendLine("            {");
-            sb.AppendLine($"                {strFieldName} = \"{randomSuffix}_altered\";");
-            sb.AppendLine("            }");
-            sb.AppendLine("        }");
-            sb.AppendLine("    }");
-            sb.AppendLine("}");
-
-            return sb.ToString();
-        }
-
-        private string GenerateRandomJunkMethods()
-        {
-            const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            string GetRandStr(int len)
-            {
-                StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < len; i++)
-                {
-                    builder.Append(chars[UnityEngine.Random.Range(0, chars.Length)]);
-                }
-                return builder.ToString();
-            }
-
-            string valName1 = "m_JunkVal_" + GetRandStr(4);
-            string valName2 = "m_JunkStr_" + GetRandStr(4);
-            string methodName1 = "CalculateJunk_" + GetRandStr(5);
-            string methodName2 = "FormatJunk_" + GetRandStr(5);
-
-            int val1 = UnityEngine.Random.Range(10, 100);
-            int val2 = UnityEngine.Random.Range(100, 500);
-
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine($"        // Junk fields");
-            sb.AppendLine($"        private int {valName1} = {val1};");
-            sb.AppendLine($"        private string {valName2} = \"{GetRandStr(6)}\";");
-            sb.AppendLine();
-            sb.AppendLine($"        // Junk method 1");
-            sb.AppendLine($"        public float {methodName1}(float inputVal)");
-            sb.AppendLine("        {");
-            sb.AppendLine($"            float result = inputVal * {valName1};");
-            sb.AppendLine($"            if (result > {val2})");
-            sb.AppendLine("            {");
-            sb.AppendLine($"                result /= 2f;");
-            sb.AppendLine("            }");
-            sb.AppendLine("            return result;");
-            sb.AppendLine("        }");
-            sb.AppendLine();
-            sb.AppendLine($"        // Junk method 2");
-            sb.AppendLine($"        public string {methodName2}(string inputStr)");
-            sb.AppendLine("        {");
-            sb.AppendLine($"            string result = inputStr + {valName2};");
-            sb.AppendLine($"            if (result.Length > 20)");
-            sb.AppendLine("            {");
-            sb.AppendLine($"                result = result.Substring(0, 10);");
-            sb.AppendLine("            }");
-            sb.AppendLine("            return result;");
-            sb.AppendLine("        }");
-
-            return sb.ToString();
-        }
-
-        private void GenerateJunkFiles()
-        {
-            string folderPath = Path.Combine(Application.dataPath, "JunkCode");
-            
-            if (isDryRun)
-            {
-                pendingChanges.Add(new PendingFileChange { filePath = folderPath, changeDescription = $"Generate {junkFileCount} random junk script files inside Assets/JunkCode/" });
-                return;
-            }
-
-            if (!Directory.Exists(folderPath))
-            {
-                Directory.CreateDirectory(folderPath);
-            }
-
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            string GetRandName(int len)
-            {
-                StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < len; i++)
-                {
-                    builder.Append(chars[UnityEngine.Random.Range(0, chars.Length)]);
-                }
-                return builder.ToString();
-            }
-
-            for (int i = 0; i < junkFileCount; i++)
-            {
-                string className = "JunkUtility_" + GetRandName(8);
-                string fileName = className + ".cs";
-                string fullPath = Path.Combine(folderPath, fileName);
-
-                string content = GenerateRandomJunkFileContent(className);
-                File.WriteAllText(fullPath, content);
-            }
-
-            AssetDatabase.Refresh();
-            Debug.Log($"Successfully generated {junkFileCount} separate junk files in Assets/JunkCode.");
-        }
-
-        private string GenerateRandomJunkFileContent(string className)
-        {
-            const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            string GetRandStr(int len)
-            {
-                StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < len; i++)
-                {
-                    builder.Append(chars[UnityEngine.Random.Range(0, chars.Length)]);
-                }
-                return builder.ToString();
-            }
-
-            string nsName = "JunkNS_" + GetRandStr(6);
-            string varName = "junkVal_" + GetRandStr(4);
-            string funcName = "ComputeJunk_" + GetRandStr(5);
-
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("using UnityEngine;");
-            sb.AppendLine();
-            sb.AppendLine($"namespace {nsName}");
-            sb.AppendLine("{");
-            sb.AppendLine($"    public class {className}");
-            sb.AppendLine("    {");
-            sb.AppendLine($"        public static int {varName} = {UnityEngine.Random.Range(10, 100)};");
-            sb.AppendLine();
-            sb.AppendLine($"        public static float {funcName}(float input)");
-            sb.AppendLine("        {");
-            sb.AppendLine($"            float result = input + {varName};");
-            sb.AppendLine("            for (int i = 0; i < 5; i++)");
-            sb.AppendLine("            {");
-            sb.AppendLine("                result += i;");
-            sb.AppendLine("            }");
-            sb.AppendLine("            return result;");
-            sb.AppendLine("        }");
-            sb.AppendLine("    }");
-            sb.AppendLine("}");
-
-            return sb.ToString();
         }
     }
 }
