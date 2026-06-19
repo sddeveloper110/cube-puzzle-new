@@ -587,6 +587,29 @@ namespace SoftwareDistrict.Framework.Refactoring
                     allUserScripts.Add(Path.GetFullPath(assetPath));
                 }
 
+                // Gather all scenes, prefabs, and ScriptableObject assets across the whole project (excluding Packages)
+                var allYamlFiles = new List<string>();
+                try
+                {
+                    string assetsFullPath = Application.dataPath;
+                    if (Directory.Exists(assetsFullPath))
+                    {
+                        string[] rawFiles = Directory.GetFiles(assetsFullPath, "*", SearchOption.AllDirectories);
+                        foreach (string f in rawFiles)
+                        {
+                            string ext = Path.GetExtension(f).ToLower();
+                            if (ext == ".unity" || ext == ".prefab" || ext == ".asset")
+                            {
+                                allYamlFiles.Add(Path.GetFullPath(f));
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"Error gathering YAML files: {ex.Message}");
+                }
+
                 for (int i = 0; i < renames.Count; i++)
                 {
                     var rename = renames[i];
@@ -601,6 +624,18 @@ namespace SoftwareDistrict.Framework.Refactoring
                         {
                             fileContent = Regex.Replace(fileContent, oldClassRegex, rename.newName);
                             SetFileContent(scriptPath, fileContent);
+                        }
+                    }
+
+                    // Update m_TargetAssemblyTypeName inside Unity scenes/prefabs/assets to prevent button click reference loss!
+                    string targetAssemblyRegex = @"m_TargetAssemblyTypeName:\s*" + Regex.Escape(rename.oldName) + @"\b";
+                    foreach (string yamlPath in allYamlFiles)
+                    {
+                        string fileContent = GetFileContent(yamlPath);
+                        if (fileContent != null && Regex.IsMatch(fileContent, targetAssemblyRegex))
+                        {
+                            fileContent = Regex.Replace(fileContent, targetAssemblyRegex, "m_TargetAssemblyTypeName: " + rename.newName);
+                            SetFileContent(yamlPath, fileContent);
                         }
                     }
 
