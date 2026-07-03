@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "666746038690",
-    "project_id": "cubesmasher-v1",
-    "storage_bucket": "cubesmasher-v1.firebasestorage.app"
+    "project_number": "724613387474",
+    "project_id": "cube-smasher-playstore",
+    "storage_bucket": "cube-smasher-playstore.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:666746038690:android:3979693613cb53c05b6afb",
+        "mobilesdk_app_id": "1:724613387474:android:3b789a24d7b9506aacc90b",
         "android_client_info": {
           "package_name": "com.DefaultCompany.CubeSmasher65"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAg6iicgN2man5Ri8bCtzRtO7wDt9UOTls"
+          "current_key": "AIzaSyA4-TIS6v2lk5hlhQ4yPyJpsBYEp-jYSzE"
         }
       ],
       "services": {

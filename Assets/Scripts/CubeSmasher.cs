@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using DG.Tweening;
 using TMPro;
@@ -287,8 +287,11 @@ public class CubeSmasher : MonoBehaviour
     public void StartGame()
     {
         CancelScoreTweens();
-
-        //Debug.LogError("game started");
+        
+        if (FirebaseCall.Instance != null)
+        {
+            FirebaseCall.Instance.LogEvent("game_start");
+        }
         stopTimerOnWinning = false;
         highScoreEffect.SetActive(false);
 
@@ -1463,6 +1466,7 @@ public class CubeSmasher : MonoBehaviour
         highScoreTween?.Kill();
         scoreTween?.Kill();
         delayedCallTween?.Kill();
+        DOTween.Kill("HighScoreAnimation");
     }
 
     private void ShowRegularScore()
@@ -1524,7 +1528,7 @@ public class CubeSmasher : MonoBehaviour
             gameOverScreen.GetComponent<Animator>().enabled = true;
             gameOverScreen.GetComponent<Animator>().SetTrigger("hi");
             //Debug.LogError("hellog ");
-        });
+        }).SetId("HighScoreAnimation");
         gameEndScoreLabel.text = "";
         gameEndHighScoreLabel.text = "";
 
@@ -1535,8 +1539,8 @@ public class CubeSmasher : MonoBehaviour
             {
                 oldScore = x;
                 gameEndScoreLabel.text = $"{x}";
-            }, score, 1.5f).SetEase(Ease.OutExpo);
-        });
+            }, score, 1.5f).SetEase(Ease.OutExpo).SetId("HighScoreAnimation");
+        }).SetId("HighScoreAnimation");
         DOVirtual.DelayedCall(2.5f, () =>
         {
             AudioManager.PlayAudio(countingUpSound);
@@ -1553,8 +1557,8 @@ public class CubeSmasher : MonoBehaviour
                         highScoreEffect.SetActive(true);
 
                     AudioManager.PlayAudio(highScoreAudio);
-                });
-        });
+                }).SetId("HighScoreAnimation");
+        }).SetId("HighScoreAnimation");
     }
 
 
@@ -1588,6 +1592,10 @@ public class CubeSmasher : MonoBehaviour
     private void SetDefault()
     {
         StopAllCoroutines();
+        if (lineSpawner != null)
+        {
+            lineSpawner.SetActive(false);
+        }
         hasBrokenRecord = false;
         upComingBox.gameObject.SetActive(false);
         state = GameState.Game;

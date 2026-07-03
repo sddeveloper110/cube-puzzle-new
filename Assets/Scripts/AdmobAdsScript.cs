@@ -3,6 +3,10 @@ using GoogleMobileAds.Api;
 using System;
 using GoogleMobileAds.Common;
 using UnityEngine.SceneManagement;
+using TMPro;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class AdmobAdsScript : MonoBehaviour
 {
@@ -270,12 +274,7 @@ public class AdmobAdsScript : MonoBehaviour
     }
     public void ShowRewardedAd(Action onRewardEarned = null)
     {
-        if (!showAds)
-        {
-            return;
-        }
-
-        if (rewardedAd != null && rewardedAd.CanShowAd())
+        if (showAds && rewardedAd != null && rewardedAd.CanShowAd())
         {
             rewardedAd.Show((Reward reward) =>
             {
@@ -285,9 +284,19 @@ public class AdmobAdsScript : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("Rewarded ad not ready yet. Reloading...");
+            Debug.LogWarning("Rewarded ad not ready yet or ads disabled. Triggering fallback timer...");
             LoadRewardedAd();
-      
+
+            Canvas canvas = FindAnyObjectByType<Canvas>();
+            if (canvas != null)
+            {
+                AdFallbackPopup.Create(canvas, onRewardEarned);
+            }
+            else
+            {
+                Debug.LogError("No Canvas found to display Ad Fallback. Rewarding immediately.");
+                onRewardEarned?.Invoke();
+            }
         }
     }
 
@@ -452,6 +461,106 @@ public class AdmobAdsScript : MonoBehaviour
                 //ShowAppOpenAd();
             }
         }
+    }
+}
+
+public class AdFallbackPopup : MonoBehaviour
+{
+    private System.Action onComplete;
+    private TextMeshProUGUI descText;
+    private int secondsLeft = 10;
+
+    public static void Create(Canvas canvas, System.Action onComplete)
+    {
+        GameObject overlayGo = new GameObject("AdFallbackOverlay", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+        overlayGo.transform.SetParent(canvas.transform, false);
+
+        RectTransform overlayRt = overlayGo.GetComponent<RectTransform>();
+        overlayRt.anchorMin = Vector2.zero;
+        overlayRt.anchorMax = Vector2.one;
+        overlayRt.pivot = new Vector2(0.5f, 0.5f);
+        overlayRt.offsetMin = Vector2.zero;
+        overlayRt.offsetMax = Vector2.zero;
+
+        Image overlayImg = overlayGo.GetComponent<Image>();
+        overlayImg.color = new Color(0f, 0f, 0f, 0.75f); // semi-transparent dim
+
+        // Create Dialog Box
+        GameObject dialogGo = new GameObject("Dialog", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+        dialogGo.transform.SetParent(overlayGo.transform, false);
+
+        RectTransform dialogRt = dialogGo.GetComponent<RectTransform>();
+        dialogRt.anchorMin = new Vector2(0.5f, 0.5f);
+        dialogRt.anchorMax = new Vector2(0.5f, 0.5f);
+        dialogRt.pivot = new Vector2(0.5f, 0.5f);
+        dialogRt.sizeDelta = new Vector2(550f, 320f);
+
+        Image dialogImg = dialogGo.GetComponent<Image>();
+        // Sleek modern grey panel
+        dialogImg.color = new Color(0.12f, 0.13f, 0.15f, 1f); 
+
+        // Create Title Text
+        GameObject titleGo = new GameObject("Title", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
+        titleGo.transform.SetParent(dialogGo.transform, false);
+
+        RectTransform titleRt = titleGo.GetComponent<RectTransform>();
+        titleRt.anchorMin = new Vector2(0.5f, 1f);
+        titleRt.anchorMax = new Vector2(0.5f, 1f);
+        titleRt.pivot = new Vector2(0.5f, 1f);
+        titleRt.anchoredPosition = new Vector2(0f, -30f);
+        titleRt.sizeDelta = new Vector2(500f, 50f);
+
+        TextMeshProUGUI titleTmp = titleGo.GetComponent<TextMeshProUGUI>();
+        titleTmp.text = "Ad Unavailable";
+        titleTmp.fontSize = 32;
+        titleTmp.fontStyle = FontStyles.Bold;
+        titleTmp.color = Color.white;
+        titleTmp.alignment = TextAlignmentOptions.Center;
+
+        // Create Message Text
+        GameObject msgGo = new GameObject("Message", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
+        msgGo.transform.SetParent(dialogGo.transform, false);
+
+        RectTransform msgRt = msgGo.GetComponent<RectTransform>();
+        msgRt.anchorMin = Vector2.zero;
+        msgRt.anchorMax = Vector2.one;
+        msgRt.pivot = new Vector2(0.5f, 0.5f);
+        msgRt.offsetMin = new Vector2(20f, 20f);
+        msgRt.offsetMax = new Vector2(-20f, -80f);
+
+        TextMeshProUGUI msgTmp = msgGo.GetComponent<TextMeshProUGUI>();
+        msgTmp.fontSize = 24;
+        msgTmp.color = new Color(0.8f, 0.82f, 0.85f, 1f);
+        msgTmp.alignment = TextAlignmentOptions.Center;
+
+        AdFallbackPopup popup = overlayGo.AddComponent<AdFallbackPopup>();
+        popup.onComplete = onComplete;
+        popup.descText = msgTmp;
+        popup.StartCountdown();
+    }
+
+    private void StartCountdown()
+    {
+        StartCoroutine(CountdownRoutine());
+    }
+
+    private IEnumerator CountdownRoutine()
+    {
+        while (secondsLeft > 0)
+        {
+            descText.text = $"Ad is unable to load at this time.\n\nYou will be rewarded in\n<color=#F8B531><size=32><b>{secondsLeft} seconds</b></size></color>";
+            yield return new WaitForSecondsRealtime(1.0f);
+            secondsLeft--;
+        }
+
+        descText.text = "Rewarding you now...";
+        yield return new WaitForSecondsRealtime(0.5f);
+
+        // Grant reward
+        onComplete?.Invoke();
+
+        // Destroy panel
+        Destroy(gameObject);
     }
 }
 

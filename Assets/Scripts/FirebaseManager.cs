@@ -50,6 +50,7 @@ public class FirebaseManager : MonoBehaviour
 
     public void LogEvent(string eventName)
     {
+        Debug.Log($"[FirebaseManager] LogEvent: {eventName} (Ready: {firebaseReady})");
         if (!firebaseReady) return;
 
         FirebaseAnalytics.LogEvent(eventName);
@@ -57,17 +58,17 @@ public class FirebaseManager : MonoBehaviour
 
     public void LevelStarted(int level)
     {
+        Debug.Log($"[FirebaseManager] LevelStarted: {level} (Ready: {firebaseReady})");
         if (!firebaseReady) return;
-        Debug.LogError("Logging level started event for level " + level);
         FirebaseAnalytics.LogEvent(
             "level_started",
             new Parameter("level_number", level)
         );
     }
 
- 
     public void LevelCompleted(int level)
     {
+        Debug.Log($"[FirebaseManager] LevelCompleted: {level} (Ready: {firebaseReady})");
         if (!firebaseReady) return;
 
         FirebaseAnalytics.LogEvent(
@@ -77,8 +78,8 @@ public class FirebaseManager : MonoBehaviour
     }
     public void levelFailed(int level)
     {
-        //Debug.LogError ($"{level} failed.");
-        if(firebaseReady) return;
+        Debug.Log($"[FirebaseManager] levelFailed: {level} (Ready: {firebaseReady})");
+        if (!firebaseReady) return;
         FirebaseAnalytics.LogEvent(
             "level_failed",
             new Parameter("level_number", level)
