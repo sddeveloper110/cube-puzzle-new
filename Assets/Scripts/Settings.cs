@@ -72,14 +72,52 @@ public sealed class Settings : MonoBehaviour, IPointerClickHandler
 #endif
     }
 
+#if UNITY_IOS && !UNITY_EDITOR
+    [System.Runtime.InteropServices.DllImport("__Internal")]
+    private static extern void _iOS_ShareText(string text);
+#endif
+
     // --- Share Functionality ---
     public void OnShareWithFriends()
     {
         string finalUrl = GetAutoStoreURL();
         string message = "Check out this awesome game! " + finalUrl;
 
+#if UNITY_ANDROID && !UNITY_EDITOR
+        try
+        {
+            AndroidJavaClass intentClass = new AndroidJavaClass("android.content.Intent");
+            AndroidJavaObject intentObject = new AndroidJavaObject("android.content.Intent");
+            intentObject.Call<AndroidJavaObject>("setAction", intentClass.GetStatic<string>("ACTION_SEND"));
+            intentObject.Call<AndroidJavaObject>("setType", "text/plain");
+            intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_TEXT"), message);
+            
+            AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+            AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+            
+            AndroidJavaObject chooser = intentClass.CallStatic<AndroidJavaObject>("createChooser", intentObject, "Share Cube Smasher");
+            currentActivity.Call("startActivity", chooser);
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError("Android Native Share failed: " + ex.Message);
+            GUIUtility.systemCopyBuffer = message;
+        }
+#elif UNITY_IOS && !UNITY_EDITOR
+        try
+        {
+            _iOS_ShareText(message);
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError("iOS Native Share failed: " + ex.Message);
+            GUIUtility.systemCopyBuffer = message;
+        }
+#else
+        // Fallback for editor or other platforms
         GUIUtility.systemCopyBuffer = message;
-        Debug.Log("Link copied to clipboard: " + message);
+        Debug.Log("Link copied to clipboard (Editor Fallback): " + message);
+#endif
     }
 
     // --- Rate Us Functionality ---
