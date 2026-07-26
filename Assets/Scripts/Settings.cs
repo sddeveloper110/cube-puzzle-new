@@ -74,14 +74,15 @@ public sealed class Settings : MonoBehaviour, IPointerClickHandler
 
 #if UNITY_IOS && !UNITY_EDITOR
     [System.Runtime.InteropServices.DllImport("__Internal")]
-    private static extern void _iOS_ShareText(string text);
+    private static extern void _iOS_ShareText(string text, string url);
 #endif
 
     // --- Share Functionality ---
     public void OnShareWithFriends()
     {
         string finalUrl = GetAutoStoreURL();
-        string message = "Check out this awesome game! " + finalUrl;
+        string textMessage = "Check out this awesome game!";
+        string fullMessage = textMessage + " " + finalUrl;
 
 #if UNITY_ANDROID && !UNITY_EDITOR
         try
@@ -90,7 +91,24 @@ public sealed class Settings : MonoBehaviour, IPointerClickHandler
             AndroidJavaObject intentObject = new AndroidJavaObject("android.content.Intent");
             intentObject.Call<AndroidJavaObject>("setAction", intentClass.GetStatic<string>("ACTION_SEND"));
             intentObject.Call<AndroidJavaObject>("setType", "text/plain");
-            intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_TEXT"), message);
+            intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_TEXT"), fullMessage);
+            
+            // Set ClipData containing Uri for rich thumbnail/link preview
+            try
+            {
+                AndroidJavaClass uriClass = new AndroidJavaClass("android.net.Uri");
+                AndroidJavaObject uriObject = uriClass.CallStatic<AndroidJavaObject>("parse", finalUrl);
+                
+                AndroidJavaClass clipDataClass = new AndroidJavaClass("android.view.ClipData");
+                AndroidJavaObject clipData = clipDataClass.CallStatic<AndroidJavaObject>("newRawUri", "App Link", uriObject);
+                
+                intentObject.Call<AndroidJavaObject>("setClipData", clipData);
+                intentObject.Call<AndroidJavaObject>("addFlags", intentClass.GetStatic<int>("FLAG_GRANT_READ_URI_PERMISSION"));
+            }
+            catch (System.Exception clipEx)
+            {
+                Debug.LogWarning("Android ClipData rich preview failed: " + clipEx.Message);
+            }
             
             AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
             AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
@@ -101,22 +119,22 @@ public sealed class Settings : MonoBehaviour, IPointerClickHandler
         catch (System.Exception ex)
         {
             Debug.LogError("Android Native Share failed: " + ex.Message);
-            GUIUtility.systemCopyBuffer = message;
+            GUIUtility.systemCopyBuffer = fullMessage;
         }
 #elif UNITY_IOS && !UNITY_EDITOR
         try
         {
-            _iOS_ShareText(message);
+            _iOS_ShareText(textMessage, finalUrl);
         }
         catch (System.Exception ex)
         {
             Debug.LogError("iOS Native Share failed: " + ex.Message);
-            GUIUtility.systemCopyBuffer = message;
+            GUIUtility.systemCopyBuffer = fullMessage;
         }
 #else
         // Fallback for editor or other platforms
-        GUIUtility.systemCopyBuffer = message;
-        Debug.Log("Link copied to clipboard (Editor Fallback): " + message);
+        GUIUtility.systemCopyBuffer = fullMessage;
+        Debug.Log("Link copied to clipboard (Editor Fallback): " + fullMessage);
 #endif
     }
 

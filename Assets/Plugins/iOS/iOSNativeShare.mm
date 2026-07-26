@@ -1,11 +1,23 @@
 #import <UIKit/UIKit.h>
 
 extern "C" {
-    void _iOS_ShareText(const char* text) {
-        if (text == NULL) return;
-
-        NSString* shareMessage = [NSString stringWithUTF8String:text];
-        NSArray* itemsToShare = @[shareMessage];
+    void _iOS_ShareText(const char* text, const char* url) {
+        if (text == NULL && url == NULL) return;
+        
+        NSMutableArray* itemsToShare = [[NSMutableArray alloc] init];
+        
+        if (text != NULL && strlen(text) > 0) {
+            [itemsToShare addObject:[NSString stringWithUTF8String:text]];
+        }
+        
+        if (url != NULL && strlen(url) > 0) {
+            NSURL* nsUrl = [NSURL URLWithString:[NSString stringWithUTF8String:url]];
+            if (nsUrl) {
+                [itemsToShare addObject:nsUrl];
+            }
+        }
+        
+        if (itemsToShare.count == 0) return;
         
         UIActivityViewController* activityVC = [[UIActivityViewController alloc] initWithActivityItems:itemsToShare applicationActivities:nil];
         

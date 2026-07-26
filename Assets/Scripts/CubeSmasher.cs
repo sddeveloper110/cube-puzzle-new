@@ -26,6 +26,12 @@ public class CubeSmasher : MonoBehaviour
     [SerializeField] private Button beatTheClockButton;
     [SerializeField] private Button howToPlayButton;
 
+    [Header("Mode Info Buttons")]
+    [SerializeField] private Button rackUpInfoButton;
+    [SerializeField] private Button clockInfoButton;
+    [SerializeField] private Button classicInfoButton;
+    [SerializeField] private ModeInfoPopup modeInfoPopup;
+
 
     [Header("Game Settings")] [SerializeField]
     private UIDragBox boxPrefab;
@@ -78,6 +84,7 @@ public class CubeSmasher : MonoBehaviour
     private GameObject titleScreen;
 
     [SerializeField] private GameObject gameOverScreen;
+    [SerializeField] private RewardsPopup rewardsPopup;
     [SerializeField] private GameObject instructionsScreen;
     [SerializeField] private GameObject gameScreen;
     [SerializeField] public GameObject lineSpawner;
@@ -191,7 +198,121 @@ public class CubeSmasher : MonoBehaviour
         //playAgainButton.onClick.AddListener(() => StartGame());
         backToTitleButton.onClick.AddListener(() => BackToTitleScreen());
 
+        SetupModeInfoButtons();
+
         TittleScreen();
+    }
+
+    public void StartGameMode(Mode mode)
+    {
+        StartGame(mode);
+    }
+
+    private Button runtimeRackUpInfoBtn;
+    private Button runtimeClockInfoBtn;
+    private Button runtimeClassicInfoBtn;
+
+    private void SetupModeInfoButtons()
+    {
+        Button rackUpBtn = rackUpInfoButton != null ? rackUpInfoButton : runtimeRackUpInfoBtn;
+        if (rackUpBtn == null && rackUpButton != null)
+        {
+            runtimeRackUpInfoBtn = CreateModeInfoButton(rackUpButton.transform, new Color(0.96f, 0.72f, 0.12f, 1f));
+            rackUpBtn = runtimeRackUpInfoBtn;
+        }
+        if (rackUpBtn != null)
+        {
+            rackUpBtn.onClick.RemoveAllListeners();
+            rackUpBtn.onClick.AddListener(() => ShowModeInfo(Mode.Rackup));
+        }
+
+        Button clockBtn = clockInfoButton != null ? clockInfoButton : runtimeClockInfoBtn;
+        if (clockBtn == null && beatTheClockButton != null)
+        {
+            runtimeClockInfoBtn = CreateModeInfoButton(beatTheClockButton.transform, new Color(0.16f, 0.73f, 0.96f, 1f));
+            clockBtn = runtimeClockInfoBtn;
+        }
+        if (clockBtn != null)
+        {
+            clockBtn.onClick.RemoveAllListeners();
+            clockBtn.onClick.AddListener(() => ShowModeInfo(Mode.Clock));
+        }
+
+        Button classicBtn = classicInfoButton != null ? classicInfoButton : runtimeClassicInfoBtn;
+        if (classicBtn == null && startClassicButton != null)
+        {
+            runtimeClassicInfoBtn = CreateModeInfoButton(startClassicButton.transform, new Color(0.18f, 0.8f, 0.44f, 1f));
+            classicBtn = runtimeClassicInfoBtn;
+        }
+        if (classicBtn != null)
+        {
+            classicBtn.onClick.RemoveAllListeners();
+            classicBtn.onClick.AddListener(() => ShowModeInfo(Mode.Classic));
+        }
+    }
+
+    public void ShowModeInfo(Mode mode)
+    {
+        Canvas canvas = GetComponentInParent<Canvas>();
+        if (canvas == null) canvas = FindAnyObjectByType<Canvas>();
+        Transform canvasTr = canvas != null ? canvas.transform : null;
+
+        if (modeInfoPopup != null)
+        {
+            modeInfoPopup.Show(this, tutorialManager, mode);
+        }
+        else
+        {
+            ModeInfoPopup.ShowPopup(canvasTr, this, tutorialManager, mode);
+        }
+    }
+
+    private Button CreateModeInfoButton(Transform modeButtonTr, Color circleColor)
+    {
+        Transform existing = modeButtonTr.Find("InfoButton");
+        if (existing != null)
+        {
+            return existing.GetComponent<Button>();
+        }
+
+        GameObject infoGo = new GameObject("InfoButton");
+        infoGo.transform.SetParent(modeButtonTr, false);
+
+        RectTransform rt = infoGo.AddComponent<RectTransform>();
+        rt.anchorMin = new Vector2(1f, 0.5f);
+        rt.anchorMax = new Vector2(1f, 0.5f);
+        rt.pivot = new Vector2(0.5f, 0.5f);
+        rt.anchoredPosition = new Vector2(30f, 0f);
+        rt.sizeDelta = new Vector2(75f, 75f);
+
+        Image img = infoGo.AddComponent<Image>();
+        img.color = circleColor;
+
+        Outline outline = infoGo.AddComponent<Outline>();
+        outline.effectColor = new Color(0.1f, 0.1f, 0.1f, 0.6f);
+        outline.effectDistance = new Vector2(2f, -2f);
+
+        Button btn = infoGo.AddComponent<Button>();
+
+        GameObject textGo = new GameObject("Text");
+        textGo.transform.SetParent(infoGo.transform, false);
+
+        RectTransform textRt = textGo.AddComponent<RectTransform>();
+        textRt.anchorMin = Vector2.zero;
+        textRt.anchorMax = Vector2.one;
+        textRt.offsetMin = Vector2.zero;
+        textRt.offsetMax = Vector2.zero;
+
+        TextMeshProUGUI tmp = textGo.AddComponent<TextMeshProUGUI>();
+        TMP_FontAsset fontAsset = RewardsPopup.GetGameFont();
+        if (fontAsset != null) tmp.font = fontAsset;
+        tmp.text = "i";
+        tmp.fontSize = 42;
+        tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
+        tmp.color = Color.white;
+        tmp.alignment = TextAlignmentOptions.Center;
+
+        return btn;
     }
 
     private void TittleScreen()
@@ -1503,7 +1624,17 @@ public class CubeSmasher : MonoBehaviour
                             oldScore = x;
                             gameEndScoreLabel.text = $"{x}";
                         }, score, 1.5f)
-                        .SetEase(Ease.OutExpo);
+                        .SetEase(Ease.OutExpo)
+                        .OnComplete(() =>
+                        {
+                            DOVirtual.DelayedCall(1.0f, () =>
+                            {
+                                if (rewardsPopup != null)
+                                    rewardsPopup.Show(this);
+                                else
+                                    RewardsPopup.ShowPopup(gameOverScreen.transform, this);
+                            });
+                        });
                 });
             });
     }
@@ -1557,6 +1688,14 @@ public class CubeSmasher : MonoBehaviour
                         highScoreEffect.SetActive(true);
 
                     AudioManager.PlayAudio(highScoreAudio);
+
+                    DOVirtual.DelayedCall(1.0f, () =>
+                    {
+                        if (rewardsPopup != null)
+                            rewardsPopup.Show(this);
+                        else
+                            RewardsPopup.ShowPopup(gameOverScreen.transform, this);
+                    }).SetId("HighScoreAnimation");
                 }).SetId("HighScoreAnimation");
         }).SetId("HighScoreAnimation");
     }
