@@ -85,6 +85,7 @@ public class CubeSmasher : MonoBehaviour
 
     [SerializeField] private GameObject gameOverScreen;
     [SerializeField] private RewardsPopup rewardsPopup;
+    [SerializeField] private Button checkRewardsProgressButton;
     [SerializeField] private GameObject instructionsScreen;
     [SerializeField] private GameObject gameScreen;
     [SerializeField] public GameObject lineSpawner;
@@ -99,8 +100,20 @@ public class CubeSmasher : MonoBehaviour
     [SerializeField] private Sprite[] instructionsSprites;
 
 
-    //[Header("Game Over")] [SerializeField] private Button playAgainButton;
+    [Header("Game Over Panel")]
+    [SerializeField] private GameOverPanel gameOverPanel;
     [SerializeField] private Button backToTitleButton;
+
+    private GameOverPanel GetGameOverPanel()
+    {
+        if (gameOverPanel == null && gameOverScreen != null)
+        {
+            gameOverPanel = gameOverScreen.GetComponent<GameOverPanel>();
+            if (gameOverPanel == null)
+                gameOverPanel = gameOverScreen.gameObject.AddComponent<GameOverPanel>();
+        }
+        return gameOverPanel;
+    }
     [HideInInspector] public Dictionary<(int x, int y), Box> grid = new();
     private Box draggedBox;
     private Vector2 dragOffset;
@@ -199,8 +212,47 @@ public class CubeSmasher : MonoBehaviour
         backToTitleButton.onClick.AddListener(() => BackToTitleScreen());
 
         SetupModeInfoButtons();
+        SetupCheckRewardsProgressButton();
 
         TittleScreen();
+    }
+
+    private Button runtimeCheckRewardsBtn;
+
+    private void SetupCheckRewardsProgressButton()
+    {
+        // Ensure the Game Over screen exists.
+        if (gameOverScreen == null)
+        {
+            Debug.LogWarning("GameOverScreen reference missing; cannot set up Check Rewards Progress button.");
+            return;
+        }
+
+        // Use the button assigned via the inspector.
+        Button rewardsBtn = checkRewardsProgressButton;
+        if (rewardsBtn == null)
+        {
+            // Attempt to find a button by a common name as a fallback (optional).
+            Transform existingBtnTr = gameOverScreen.transform.Find("CheckRewardsProgressButton");
+            if (existingBtnTr != null)
+                rewardsBtn = existingBtnTr.GetComponent<Button>();
+        }
+
+        if (rewardsBtn == null)
+        {
+            Debug.LogError("CheckRewardsProgressButton is not assigned. Please assign it in the inspector or ensure a child named 'CheckRewardsProgressButton' exists.");
+            return;
+        }
+
+        // Clear any previous listeners and assign the popup opening action.
+        rewardsBtn.onClick.RemoveAllListeners();
+        rewardsBtn.onClick.AddListener(() =>
+        {
+            if (rewardsPopup != null)
+                rewardsPopup.Show(this);
+            else
+                RewardsPopup.ShowPopup(gameOverScreen.transform, this);
+        });
     }
 
     public void StartGameMode(Mode mode)
@@ -304,8 +356,6 @@ public class CubeSmasher : MonoBehaviour
         textRt.offsetMax = Vector2.zero;
 
         TextMeshProUGUI tmp = textGo.AddComponent<TextMeshProUGUI>();
-        TMP_FontAsset fontAsset = RewardsPopup.GetGameFont();
-        if (fontAsset != null) tmp.font = fontAsset;
         tmp.text = "i";
         tmp.fontSize = 42;
         tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
@@ -326,6 +376,17 @@ public class CubeSmasher : MonoBehaviour
 
     private void BackToTitleScreen()
     {
+        // Stop all gameplay sounds immediately on exit
+        AudioManager.StopAllSFX();
+        if (timerAudioSource.isPlaying)
+            timerAudioSource.Stop();
+
+        CancelScoreTweens();
+
+        GameOverPanel panel = GetGameOverPanel();
+        if (panel != null)
+            panel.HidePanel();
+
         UiManager.Instance.CheckForConsectieGamesAd(gameMode);
         TittleScreen();
         AudioManager.PlayBG(true);
@@ -376,16 +437,39 @@ public class CubeSmasher : MonoBehaviour
         UiManager.Instance.CheckForConsectieGamesAd(gameMode, false);
         StartGame();
     }
+    private static readonly HashSet<Mode> sessionModesPlayed = new();
+    private static bool multiModeTriggeredThisSession = false;
+    private static string lastModePlayedName = null;
+
     public void OnRoundStarted(Mode mode)
     {
-        FirebaseCall.Instance?.LogEvent(EventNames[mode]);
+        string currentEventName = EventNames[mode];
+        FirebaseCall.Instance?.LogEvent(currentEventName);
+
+        if (!multiModeTriggeredThisSession)
+        {
+            if (sessionModesPlayed.Count > 0 && !sessionModesPlayed.Contains(mode))
+            {
+                multiModeTriggeredThisSession = true;
+                sessionModesPlayed.Add(mode);
+                FirebaseCall.Instance?.LogMultiModeStarted(lastModePlayedName, currentEventName);
+                Debug.Log($"[Firebase] 'multi_mode_started' event triggered! (Previous: {lastModePlayedName}, Current: {currentEventName})");
+            }
+            else
+            {
+                sessionModesPlayed.Add(mode);
+            }
+        }
+
+        lastModePlayedName = currentEventName;
     }
+
     private static readonly Dictionary<Mode, string> EventNames = new()
-{
-    { Mode.Classic,  "classic_mode_started" },
-    { Mode.Rackup,   "rackup_mode_started" },
-    { Mode.Clock, "clock_mode_started" }
-};
+    {
+        { Mode.Classic,  "classic_mode_started" },
+        { Mode.Rackup,   "rackup_mode_started" },
+        { Mode.Clock,    "clock_mode_started" }
+    };
     //public void OnRoundStarted(string modeName)
     //{
     //     1. Get the current lifetime count for THIS mode specifically
@@ -414,7 +498,6 @@ public class CubeSmasher : MonoBehaviour
             FirebaseCall.Instance.LogEvent("game_start");
         }
         stopTimerOnWinning = false;
-        highScoreEffect.SetActive(false);
 
         AudioManager.PlayBG(false);
         AdmobAdsScript.Instance.LoadBannerAd();
@@ -422,7 +505,6 @@ public class CubeSmasher : MonoBehaviour
         {
             activeSavePath = SaveClassic;
             highScores = LoadHighScoresClassic(activeSavePath);
-            Debug.LogError("hi " + level);
             level = 1;
         }
         else
@@ -482,14 +564,16 @@ public class CubeSmasher : MonoBehaviour
 
             levelTimer += dt;
 
-            // Slowed down logic:
-            // 1. Levels 1-3: Drop interval decreases by 0.5s per level (instead of 1s)
-            // 2. Levels 4+: Drop interval decreases by 0.05s per level (instead of 0.1s)
-            var interval = level <= 3
-                ? Mathf.Max(1.0f, 3.0f - (0.5f * (level - 1)))
-                : Mathf.Max(0.1f, 1.0f - (0.05f * (level - 3)));
+            // Classic Mode Box Drop Speed Logic (Capped at 4 grid clears / Level 5):
+            // 1. Level 1 (0 clears): 3.00s drop delay
+            // 2. Level 2 (1 clear):  2.55s drop delay
+            // 3. Level 3 (2 clears): 2.10s drop delay
+            // 4. Level 4 (3 clears): 1.65s drop delay
+            // 5. Level 5+ (4+ clears): Capped at 1.20s drop delay (never speeds up beyond 4 clears)
+            int effectiveLevel = Mathf.Min(level, 5);
+            var interval = 3.0f - (0.45f * (effectiveLevel - 1));
 
-            Debug.LogError("interval " + interval.ToString("f2"));
+
             if (TryGetNextAddBoxAnchoredPosition(out var nextPos) && !stopAddingBox)
             {
                 if (!upComingBox.gameObject.activeInHierarchy)
@@ -1548,6 +1632,20 @@ public class CubeSmasher : MonoBehaviour
         if (gameOver) return;
         adBuyPanel.SetActive(false);
         gameOver = true;
+
+        // Stop all gameplay sounds immediately so they don't bleed into the game over sequence
+        AudioManager.StopAllSFX();
+        AudioManager.PlayBG(false);
+        if (timerAudioSource.isPlaying)
+            timerAudioSource.Stop();
+
+        // Disable old Animator to let DOTween handle clean custom animations
+        if (gameOverScreen != null)
+        {
+            Animator anim = gameOverScreen.GetComponent<Animator>();
+            if (anim != null) anim.enabled = false;
+        }
+
         AdmobAdsScript.Instance.DestroyBannerAd();
         //
         bool isNewHighScore = score > highScores.bestScore;
@@ -1587,117 +1685,30 @@ public class CubeSmasher : MonoBehaviour
         highScoreTween?.Kill();
         scoreTween?.Kill();
         delayedCallTween?.Kill();
+        if (gameOverPanel != null)
+            gameOverPanel.CancelAnimations();
         DOTween.Kill("HighScoreAnimation");
+        DOTween.Kill("GameOverAnimation");
     }
 
     private void ShowRegularScore()
     {
-        CancelScoreTweens(); // always kill before creating
-        AudioManager.PlayAudio(gameOverAudio);
-
-        gameEndHighScoreLabel.text = "";
-        gameEndScoreLabel.text = "";
-
-        int oldScore = 0;
-        int highOldScore = 0;
-
-        scoreSequence = DOTween.Sequence()
-            .AppendInterval(1.5f)
-            .AppendCallback(() =>
-            {
-                AudioManager.PlayAudio(countingUpSound);
-
-                // store tween reference
-                highScoreTween = DOTween.To(() => highOldScore, x =>
-                    {
-                        highOldScore = x;
-                        gameEndHighScoreLabel.text = $"{x}";
-                    }, highScores.bestScore, 2f)
-                    .SetEase(Ease.OutExpo);
-
-                delayedCallTween = DOVirtual.DelayedCall(2.5f, () =>
-                {
-                    AudioManager.PlayAudio(countingUpSound);
-
-                    scoreTween = DOTween.To(() => oldScore, x =>
-                        {
-                            oldScore = x;
-                            gameEndScoreLabel.text = $"{x}";
-                        }, score, 1.5f)
-                        .SetEase(Ease.OutExpo)
-                        .OnComplete(() =>
-                        {
-                            DOVirtual.DelayedCall(1.0f, () =>
-                            {
-                                if (rewardsPopup != null)
-                                    rewardsPopup.Show(this);
-                                else
-                                    RewardsPopup.ShowPopup(gameOverScreen.transform, this);
-                            });
-                        });
-                });
-            });
+        CancelScoreTweens();
+        GameOverPanel panel = GetGameOverPanel();
+        if (panel != null)
+        {
+            panel.ShowRegularScore(this, score, highScores.bestScore);
+        }
     }
-
-
-    public GameObject highScoreEffect;
 
     private void ShowHighScoreAnimation()
     {
-        // 1️⃣ Play Game Over sound first
-        AudioManager.PlayAudio(gameOverAudio);
-
-        // Delay before counter starts (either after game over audio or fixed)
-        float afterGameOverDelay = 2f; // short cinematic pause
-        float counterDuration = 2.5f;
-        int displayedScore = 0;
-
-        int oldScore = 0;
-        DOVirtual.DelayedCall(0.5f, () =>
+        CancelScoreTweens();
+        GameOverPanel panel = GetGameOverPanel();
+        if (panel != null)
         {
-            gameOverScreen.SetActive(true);
-            gameOverScreen.GetComponent<Animator>().enabled = true;
-            gameOverScreen.GetComponent<Animator>().SetTrigger("hi");
-            //Debug.LogError("hellog ");
-        }).SetId("HighScoreAnimation");
-        gameEndScoreLabel.text = "";
-        gameEndHighScoreLabel.text = "";
-
-        DOVirtual.DelayedCall(0.8f, () =>
-        {
-            AudioManager.PlayAudio(countingUpSound);
-            DOTween.To(() => oldScore, x =>
-            {
-                oldScore = x;
-                gameEndScoreLabel.text = $"{x}";
-            }, score, 1.5f).SetEase(Ease.OutExpo).SetId("HighScoreAnimation");
-        }).SetId("HighScoreAnimation");
-        DOVirtual.DelayedCall(2.5f, () =>
-        {
-            AudioManager.PlayAudio(countingUpSound);
-            DOTween.To(() => displayedScore, x =>
-                    {
-                        displayedScore = x;
-                        gameEndHighScoreLabel.text = $"{x}";
-                    },
-                    score, 1.5f)
-                .SetEase(Ease.OutExpo)
-                .OnComplete(() =>
-                {
-                    if (highScoreEffect != null)
-                        highScoreEffect.SetActive(true);
-
-                    AudioManager.PlayAudio(highScoreAudio);
-
-                    DOVirtual.DelayedCall(1.0f, () =>
-                    {
-                        if (rewardsPopup != null)
-                            rewardsPopup.Show(this);
-                        else
-                            RewardsPopup.ShowPopup(gameOverScreen.transform, this);
-                    }).SetId("HighScoreAnimation");
-                }).SetId("HighScoreAnimation");
-        }).SetId("HighScoreAnimation");
+            panel.ShowHighScore(this, score, highScores.bestScore);
+        }
     }
 
 

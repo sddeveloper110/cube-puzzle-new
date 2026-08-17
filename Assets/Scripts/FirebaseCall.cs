@@ -155,6 +155,22 @@ public class FirebaseCall : MonoBehaviour
     {
         LogEvent(AdEvents[placement].complete);
     }
+
+    public void LogMultiModeStarted(string previousMode = null, string currentMode = null)
+    {
+        if (!string.IsNullOrEmpty(previousMode) && !string.IsNullOrEmpty(currentMode))
+        {
+            Parameter[] parameters = {
+                new Parameter("previous_mode", previousMode),
+                new Parameter("current_mode", currentMode)
+            };
+            LogEvent("multi_mode_started", parameters);
+        }
+        else
+        {
+            LogEvent("multi_mode_started");
+        }
+    }
    
      private static readonly Dictionary<AdPlacement, (string start, string complete)> AdEvents = new()
     {

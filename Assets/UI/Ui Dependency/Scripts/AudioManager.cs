@@ -23,6 +23,19 @@ public class AudioManager : MonoBehaviour
     {
         instance.audioSource.PlayOneShot(clip);
     }
+
+    /// <summary>
+    /// Stops all currently playing SFX on the main AudioSource.
+    /// Call this when transitioning to game over or title screen
+    /// to ensure gameplay sounds don't bleed into the end sequence.
+    /// </summary>
+    public static void StopAllSFX()
+    {
+        if (instance != null && instance.audioSource != null)
+        {
+            instance.audioSource.Stop();
+        }
+    }
     public static void PlayBG(AudioClip clip)
     {
         if (instance.audioSource.clip != clip)
