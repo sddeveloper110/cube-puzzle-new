@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@string/gcm_defaultSenderId,@string/google_storage_bucket,@string/project_id,@string/google_api_key,@string/google_crash_reporting_api_key,@string/google_app_id">
-  <string name="gcm_defaultSenderId" translatable="false">666746038690</string>
-  <string name="google_storage_bucket" translatable="false">cubesmasher-v1.firebasestorage.app</string>
-  <string name="project_id" translatable="false">cubesmasher-v1</string>
-  <string name="google_api_key" translatable="false">AIzaSyAg6iicgN2man5Ri8bCtzRtO7wDt9UOTls</string>
-  <string name="google_crash_reporting_api_key" translatable="false">AIzaSyAg6iicgN2man5Ri8bCtzRtO7wDt9UOTls</string>
-  <string name="google_app_id" translatable="false">1:666746038690:android:ab2e8eeeaabfb6c55b6afb</string>
+  <string name="gcm_defaultSenderId" translatable="false">724613387474</string>
+  <string name="google_storage_bucket" translatable="false">cube-smasher-playstore.firebasestorage.app</string>
+  <string name="project_id" translatable="false">cube-smasher-playstore</string>
+  <string name="google_api_key" translatable="false">AIzaSyA4-TIS6v2lk5hlhQ4yPyJpsBYEp-jYSzE</string>
+  <string name="google_crash_reporting_api_key" translatable="false">AIzaSyA4-TIS6v2lk5hlhQ4yPyJpsBYEp-jYSzE</string>
+  <string name="google_app_id" translatable="false">1:724613387474:android:3b789a24d7b9506aacc90b</string>
 </resources>
